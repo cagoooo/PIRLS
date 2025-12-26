@@ -95,23 +95,6 @@ git push -u origin main
 
 - ✅ Gemini API Key (在 .env)
 - ✅ 密碼Hash (在 .env)
-- ✅ JWT Secret (在 .env)
-
----
-
-## 🔧 環境配置
-
-### 開發環境
-
-```bash
-# .env
-GEMINI_API_KEY=你的開發API_KEY
-ADMIN_PASSWORD_HASH=開發密碼hash
-JWT_SECRET=開發用secret
-JWT_EXPIRY=2h
-```
-
-### 生產環境
 
 ```bash
 # .env (在生產服務器上)
