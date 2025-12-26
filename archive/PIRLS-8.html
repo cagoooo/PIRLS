@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>閱讀理解練習：新聞自由與社會責任</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #4169e1;
+            --secondary-color: #00a86b;
+            --accent-color: #ffd700;
+            --text-color: #333;
+            --bg-color: #f0f8ff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans TC', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            -webkit-text-size-adjust: 100%;
+        }
+
+        /* 桌面版預設樣式 (三欄式) */
+        .container {
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .column {
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 左側欄 */
+        #left-column {
+            width: 20%;
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* 中間欄 */
+        #center-column {
+            width: 50%;
+            background-color: white;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            line-height: 1.8;
+            font-size: 1.15rem;
+            text-align: justify;
+        }
+
+        /* 右側欄 */
+        #right-column {
+            width: 30%;
+            background-color: #fffbe6;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        h1 { font-size: 1.8rem; margin-bottom: 1rem; color: #00008b; }
+        h2 { font-size: 1.4rem; margin-bottom: 1rem; color: #00008b; }
+        #left-column h2 { color: white; }
+
+        .step {
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .question p {
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e9ecef;
+            min-height: 44px; 
+        }
+
+        .option:hover, .option:active {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+
+        .option input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 5px;
+            transform: scale(1.3);
+            flex-shrink: 0;
+        }
+
+        button.submit-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 18px;
+            border-radius: 50px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(65, 105, 225, 0.3);
+        }
+
+        button.submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        button.submit-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* 頂部使用者資訊列 (手機版) */
+        #user-info-bar {
+            display: none; 
+            background: white;
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #555;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* 登入 Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 10vh; 
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+
+        .login-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            margin-bottom: 50px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #444; }
+        
+        .select-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .select-row select {
+            flex: 1; 
+            min-width: 0;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #fff;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        /* RWD 手機版調整 */
+        @media screen and (max-width: 900px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+                overflow: visible;
+            }
+
+            #user-info-bar { display: flex; }
+            #desktop-user-info { display: none; }
+
+            .column {
+                width: 100% !important;
+                overflow: visible;
+                height: auto;
+                max-height: none;
+                padding: 15px;
+            }
+
+            #left-column {
+                background-color: var(--secondary-color);
+                padding: 15px;
+            }
+            
+            #left-column .step p { display: none; } 
+            #left-column .step { 
+                display: inline-block; 
+                margin: 5px; 
+                padding: 5px 10px; 
+                font-size: 0.85rem;
+            }
+            #left-column h2 { font-size: 1.2rem; margin-bottom: 5px; display: inline-block; margin-right: 10px;}
+            
+            #center-column {
+                border: none;
+                border-bottom: 5px solid #eee;
+                padding: 20px 15px;
+            }
+
+            #right-column {
+                border-left: none;
+                background-color: #fafafa;
+                padding-bottom: 50px;
+            }
+
+            h1 { font-size: 1.5rem; }
+            #center-column { font-size: 1.1rem; }
+        }
+        
+        /* 結果回饋 */
+        .explanation {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            display: none;
+        }
+        .explanation.show { display: block; animation: fadeIn 0.5s; }
+        .explanation.correct { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .explanation.incorrect { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .highlight { background-color: #fff3cd; padding: 0 2px; font-weight: bold; }
+
+        /* 歷史紀錄 */
+        #history-section { margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px; }
+        .history-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #ddd;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .history-item.high-score { border-left-color: #28a745; }
+        .history-item.low-score { border-left-color: #dc3545; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 登入模態框 -->
+<div id="loginModal" class="modal-overlay">
+    <div class="login-card">
+        <h2 style="text-align: center; color: var(--primary-color);">閱讀挑戰登入</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">請輸入資料以紀錄成績</p>
+        
+        <div class="form-group">
+            <label>班級選擇</label>
+            <div class="select-row">
+                <select id="gradeSelect" class="form-control">
+                    <option value="" disabled selected>年級</option>
+                    <option value="一">一年級</option>
+                    <option value="二">二年級</option>
+                    <option value="三">三年級</option>
+                    <option value="四">四年級</option>
+                    <option value="五">五年級</option>
+                    <option value="六">六年級</option>
+                    <option value="特教">特教班</option>
+                    <option value="科任">科任教室</option>
+                </select>
+                <select id="classNumberSelect" class="form-control">
+                    <option value="" disabled selected>班級</option>
+                    <!-- JS 生成 -->
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="studentName">姓名</label>
+            <input type="text" id="studentName" class="form-control" placeholder="請輸入姓名">
+        </div>
+
+        <div class="form-group">
+             <label for="seatNumber">座號 (選填)</label>
+             <input type="tel" id="seatNumber" class="form-control" placeholder="例如: 05">
+        </div>
+
+        <button class="submit-btn" onclick="saveUserInfo()">開始測驗</button>
+    </div>
+</div>
+
+<!-- 手機版頂部資訊列 -->
+<div id="user-info-bar">
+    <div>
+        <span style="font-weight: bold; color: var(--primary-color);">👤 <span id="mobile-user-name">未登入</span></span>
+    </div>
+    <div>
+        <button onclick="resetUser()" style="background: #f0f0f0; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #555;">切換</button>
+        <a href="index.html" style="margin-left: 8px; color: var(--secondary-color); text-decoration: none; font-weight: bold;">🏠 首頁</a>
+    </div>
+</div>
+
+<div class="container">
+  <!-- 左側欄 -->
+  <div id="left-column" class="column">
+    <h2>使用指南</h2>
+    
+    <!-- 桌機版使用者資訊 -->
+    <div id="desktop-user-info" style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+        <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px;">目前使用者</div>
+        <div id="desktop-user-name" style="font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">未登入</div>
+        <button onclick="resetUser()" style="background: transparent; border: 1px solid white; color: white; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; width: 100%;">切換使用者</button>
+        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+            <a href="index.html" style="color: white; text-decoration: none; display: block;">← 返回文章列表</a>
+        </div>
+    </div>
+
+    <div class="step">
+      <h3>步驟 1</h3>
+      <p>仔細閱讀中間的文章，注意細節。</p>
+    </div>
+    <div class="step">
+      <h3>步驟 2</h3>
+      <p>回答右側的4個問題。</p>
+    </div>
+    <div class="step">
+      <h3>步驟 3</h3>
+      <p>提交後，系統會自動儲存您的成績。</p>
+    </div>
+  </div>
+
+  <!-- 中間欄 -->
+  <div id="center-column" class="column">
+    <!-- 
+         注意：此處標題與內容由下方 JavaScript 配置決定 
+         為了避免混淆，這裡的文字建議與下方 ARTICLE_TITLE 保持一致
+    -->
+    <h1 id="article-title-display">閱讀文章：新聞自由與社會責任</h1>
+    
+    <div id="article-body">
+        <p>新聞自由是民主社會的重要基石，它保障了公眾獲取資訊的權利，同時也賦予了新聞工作者重大的社會責任。在這個資訊爆炸的時代，我們每天都被各種新聞所包圍，但如何辨別真實可靠的新聞成為了一項重要的技能。</p>
+        <p>新聞工作者在報導時，需要遵循「客觀」、「中立」、「平衡」和「真實」的原則。「客觀」意味著報導事實時不摻雜個人情感；「中立」是指不偏不倚地呈現各方觀點；「平衡」要求在報導爭議性話題時給予各方平等的發言機會；「真實」則是新聞最基本也最重要的要求，即報導內容必須真實可信。</p>
+        <p>然而，在現實中，完全做到這些原則並不容易。新聞工作者可能會受到各種因素的影響，如個人立場、編輯政策、廣告主壓力等。因此，讀者在閱讀新聞時也需要保持批判性思考，不應盲目相信所有報導。</p>
+        <p>新聞自由的重要性在歷史上多次得到證明。例如，1971年美國《紐約時報》和《華盛頓郵報》披露的「五角大廈文件」，揭露了美國政府在越戰中對公眾隱瞞的事實，最終促使美國結束了這場戰爭。這一事件展現了新聞自由對於監督政府、維護公眾利益的重要作用。</p>
+        <p>但新聞自由也面臨著挑戰。在一些國家，新聞自由受到政府的限制和打壓。即使在民主國家，假新聞和錯誤資訊的傳播也對新聞自由構成威脅。因此，提高公眾的新聞素養，培養批判性思考能力，對於維護新聞自由、促進社會進步至關重要。</p>
+    </div>
+    
+    <!-- 本次成績顯示區 -->
+    <div id="current-stats" style="display:none; background-color: #f0f8ff; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid #b3d7ff;">
+        <!-- 這裡顯示本次成績 -->
+    </div>
+  </div>
+
+  <!-- 右側欄 -->
+  <div id="right-column" class="column">
+    <h2>閱讀理解問題</h2>
+    
+    <!-- Q1 -->
+    <div class="question" id="q-block-1">
+      <p>1. 根據文章，新聞工作者在報導時需要遵循哪四個原則？（直接提取訊息）</p>
+      <label class="option"><input type="radio" name="q1" value="a"> 客觀、公正、平等、真實</label>
+      <label class="option"><input type="radio" name="q1" value="b"> 客觀、中立、平衡、真實</label>
+      <label class="option"><input type="radio" name="q1" value="c"> 公正、中立、平等、準確</label>
+      <label class="option"><input type="radio" name="q1" value="d"> 客觀、公正、平衡、準確</label>
+      <div class="explanation" id="exp1"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question" id="q-block-2">
+      <p>2. 為什麼在現實中，新聞工作者很難完全做到客觀、中立、平衡和真實？（推論訊息）</p>
+      <label class="option"><input type="radio" name="q2" value="a"> 因為新聞工作者缺乏專業訓練</label>
+      <label class="option"><input type="radio" name="q2" value="b"> 因為讀者喜歡看有偏見的新聞</label>
+      <label class="option"><input type="radio" name="q2" value="c"> 因為新聞工作者可能受到多方面因素的影響</label>
+      <label class="option"><input type="radio" name="q2" value="d"> 因為這些原則本身互相矛盾</label>
+      <div class="explanation" id="exp2"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question" id="q-block-3">
+      <p>3. 「五角大廈文件」事件說明了什麼？（詮釋整合訊息）</p>
+      <label class="option"><input type="radio" name="q3" value="a"> 美國政府在越戰中犯下了錯誤</label>
+      <label class="option"><input type="radio" name="q3" value="b"> 新聞自由對監督政府和維護公眾利益很重要</label>
+      <label class="option"><input type="radio" name="q3" value="c"> 《紐約時報》和《華盛頓郵報》是美國最有影響力的報紙</label>
+      <label class="option"><input type="radio" name="q3" value="d"> 越戰是一場不應該發動的戰爭</label>
+      <div class="explanation" id="exp3"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question" id="q-block-4">
+      <p>4. 根據文章，為什麼提高公眾的新聞素養很重要？（評鑑文本內容與手法）</p>
+      <label class="option"><input type="radio" name="q4" value="a"> 為了增加報紙和新聞網站的銷量</label>
+      <label class="option"><input type="radio" name="q4" value="b"> 為了幫助政府更好地控制輿論</label>
+      <label class="option"><input type="radio" name="q4" value="c"> 為了維護新聞自由，促進社會進步</label>
+      <label class="option"><input type="radio" name="q4" value="d"> 為了減少人們閱讀新聞的時間</label>
+      <div class="explanation" id="exp4"></div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="checkAnswers()">提交答案</button>
+    
+    <div id="history-section">
+        <h3>📝 您的歷史紀錄 (本篇)</h3>
+        <div id="history-list">載入中...</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+    // ==========================================================================
+    // 📌 文章參數設定區 (複製此檔案時，僅需修改此區塊即可)
+    // ==========================================================================
+    
+    const ARTICLE_CONFIG = {
+        id: 8, // 文章編號 (注意：請確保與檔名或資料庫邏輯一致)
+        title: "新聞自由與社會責任", // 文章標題
+        answers: ['b', 'c', 'b', 'c'], // 正確答案 (q1~q4)
+        hints: [
+            "提示：請仔細閱讀文章的<span class='highlight'>第二段</span>，尋找關於<span class='highlight'>新聞報導原則</span>的直接描述。",
+            "提示：結合文章<span class='highlight'>第二段</span>和<span class='highlight'>第三段</span>的信息，思考<span class='highlight'>影響新聞報導的因素</span>。",
+            "提示：請仔細閱讀文章的<span class='highlight'>第四段</span>，思考作者提到這個事件的<span class='highlight'>目的</span>是什麼。",
+            "提示：回顧<span class='highlight'>整篇文章</span>，特別是<span class='highlight'>最後一段</span>，評估作者對<span class='highlight'>提高新聞素養重要性</span>的觀點。"
+        ]
+    };
+
+    // ==========================================================================
+    // 🚀 系統邏輯區 (以下通常不需要修改)
+    // ==========================================================================
+
+    // Firebase Imports
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, doc, addDoc, setDoc, getDocs, query, where, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    // Firebase Config
+    const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+         apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
+         authDomain: "shimen-pirls.firebaseapp.com",
+         projectId: "shimen-pirls",
+         storageBucket: "shimen-pirls.firebasestorage.app",
+         messagingSenderId: "908294261992",
+         appId: "1:908294261992:web:948474ea7c2a662a778d5d"
+    };
+
+    const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls"; 
+
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // 狀態變數
+    let startTime = new Date();
+    let currentUser = null; 
+
+    // DOM 載入後執行
+    window.addEventListener('DOMContentLoaded', async () => {
+        initClassOptions(); 
+        
+        // 更新標題 (防止 HTML 寫死與參數不一致)
+        document.getElementById('article-title-display').textContent = `閱讀文章：${ARTICLE_CONFIG.title}`;
+        document.title = `閱讀理解練習：${ARTICLE_CONFIG.title}`;
+
+        checkUserLogin();
+        
+        try {
+            await signInAnonymously(auth);
+            // 登入後若有使用者資訊，嘗試載入歷史
+            if(currentUser) loadHistory(); 
+        } catch (e) {
+            console.error("Auth Error", e);
+        }
+    });
+
+    function initClassOptions() {
+        const select = document.getElementById('classNumberSelect');
+        for(let i = 1; i <= 6; i++) {
+            const opt = document.createElement('option');
+            opt.value = `${i}班`;
+            opt.textContent = `${i}班`;
+            select.appendChild(opt);
+        }
+        const extras = ["7班", "8班", "9班", "10班", "其他"];
+        extras.forEach(ex => {
+            const opt = document.createElement('option');
+            opt.value = ex;
+            opt.textContent = ex;
+            select.appendChild(opt);
+        });
+    }
+
+    function checkUserLogin() {
+        const storedUser = localStorage.getItem('shimen_pirls_user');
+        if (storedUser) {
+            currentUser = JSON.parse(storedUser);
+            updateUserUI();
+            document.getElementById('loginModal').style.display = 'none';
+        } else {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+    }
+
+    window.saveUserInfo = function() {
+        const grade = document.getElementById('gradeSelect').value;
+        const classNum = document.getElementById('classNumberSelect').value;
+        const name = document.getElementById('studentName').value.trim();
+        const seat = document.getElementById('seatNumber').value.trim();
+
+        if (!grade || !classNum || !name) {
+            alert("請完整選擇年級、班級並輸入姓名！"); 
+            return;
+        }
+        
+        const finalClass = `${grade}年${classNum}`;
+
+        currentUser = {
+            class: finalClass, 
+            name: name,
+            seat: seat,
+            fullId: `${finalClass}-${seat ? seat + '-' : ''}${name}`
+        };
+
+        localStorage.setItem('shimen_pirls_user', JSON.stringify(currentUser));
+        updateUserUI();
+        document.getElementById('loginModal').style.display = 'none';
+        startTime = new Date();
+        loadHistory();
+    };
+
+    window.resetUser = function() {
+        if(confirm("確定要切換使用者嗎？")) {
+            localStorage.removeItem('shimen_pirls_user');
+            location.reload();
+        }
+    };
+
+    function updateUserUI() {
+        const displayStr = `${currentUser.class} ${currentUser.name}`;
+        document.getElementById('mobile-user-name').textContent = displayStr;
+        document.getElementById('desktop-user-name').textContent = displayStr;
+    }
+
+    window.checkAnswers = async function() {
+        if (!currentUser) {
+            alert("請先登入！");
+            location.reload();
+            return;
+        }
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.textContent = "評分與儲存中...";
+
+        let score = 0;
+        let answersRecord = {}; 
+        
+        for (let i = 1; i <= 4; i++) {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const expDiv = document.getElementById(`exp${i}`);
+            const userVal = selected ? selected.value : "";
+            const correctVal = ARTICLE_CONFIG.answers[i-1];
+            
+            answersRecord[`q${i}`] = userVal;
+
+            expDiv.className = "explanation show";
+            if (userVal === correctVal) {
+                score++;
+                expDiv.innerHTML = `✅ <strong>正確！</strong>`;
+                expDiv.classList.add("correct");
+                expDiv.classList.remove("incorrect");
+            } else {
+                expDiv.innerHTML = `❌ <strong>需要複習：</strong> ${ARTICLE_CONFIG.hints[i-1]}`;
+                expDiv.classList.add("incorrect");
+                expDiv.classList.remove("correct");
+            }
+        }
+
+        const finalScore = (score / 4) * 100;
+        const timeTaken = Math.round((new Date() - startTime) / 1000);
+
+        const statsDiv = document.getElementById('current-stats');
+        statsDiv.style.display = 'block';
+        statsDiv.innerHTML = `
+            <h3 style="margin-top:0; color: #00008b;">📝 本次測驗結果</h3>
+            <div style="display: flex; justify-content: space-around; align-items: center; margin-bottom: 10px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: bold; color:${finalScore === 100 ? '#28a745' : '#dc3545'}">${finalScore}</div>
+                    <div style="font-size: 0.9rem; color: #666;">得分</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #4169e1;">${timeTaken}</div>
+                    <div style="font-size: 0.9rem; color: #666;">秒數</div>
+                </div>
+            </div>
+            <p style="text-align: center; margin: 0; font-size: 0.9rem; color: #888;">成績已上傳雲端</p>
+        `;
+        
+        const offset = 100;
+        const elementPosition = statsDiv.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+        window.scrollTo({
+             top: offsetPosition,
+             behavior: "smooth"
+        });
+
+        try {
+            // 1. 寫入公開資料庫 (供老師後台與歷史查詢使用)
+            const publicRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+            const recordData = {
+                classId: currentUser.class, // 資料庫一致性命名
+                studentName: currentUser.name,
+                seatNumber: currentUser.seat,
+                studentFullId: currentUser.fullId,
+                articleId: ARTICLE_CONFIG.id,
+                articleTitle: ARTICLE_CONFIG.title,
+                score: finalScore,
+                answers: answersRecord,
+                timeTakenSeconds: timeTaken,
+                timestamp: serverTimestamp(),
+                deviceInfo: navigator.userAgent
+            };
+
+            // 雙重寫入機制
+            addDoc(publicRef, recordData).catch(e => console.warn("Public write failed:", e));
+
+            // 2. 寫入個人資料庫 (備份)
+            if (auth.currentUser) {
+                const userRef = collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'quiz_results');
+                await addDoc(userRef, recordData);
+            }
+
+            // 3. 更新首頁統計
+            const statsRef = doc(db, 'artifacts', appId, 'public', 'data', 'pirls_stats', `pirls_${ARTICLE_CONFIG.id}`);
+            setDoc(statsRef, { 
+                count: increment(1),
+                title: ARTICLE_CONFIG.title 
+            }, { merge: true }).catch(e => console.warn("Stats update failed:", e));
+
+            // 重新載入歷史
+            // 加入一點延遲以確保Firestore寫入後讀取得到
+            setTimeout(loadHistory, 500);
+
+        } catch (error) {
+            console.error("Save Error:", error);
+            alert("成績已送出，但無法儲存至雲端。請檢查網路或請管理員檢查資料庫權限。");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "再次提交 (更新成績)";
+            startTime = new Date(); 
+        }
+    };
+
+    // --- 關鍵優化：比照 index.html 讀取 Public Data 並前端篩選 ---
+    // 這讓學生換裝置或登出後，只要班級姓名一樣，就能看到舊紀錄
+    async function loadHistory() {
+        if (!currentUser) return;
+
+        const listDiv = document.getElementById('history-list');
+        listDiv.innerHTML = '<div style="text-align:center; color:#888;">載入中...</div>';
+        
+        const targetClass = currentUser.class;
+        const targetName = currentUser.name;
+
+        try {
+            // 讀取 public/data/quiz_results (這裡有所有人資料)
+            const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+            // 預設依時間排序
+            const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+            
+            const snapshot = await getDocs(q);
+            
+            let records = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                
+                // 欄位比對 (處理舊資料可能的欄位名稱差異)
+                const recordClass = data.classId || data.class || "";
+                const recordName = data.studentName || data.name || "";
+
+                // 1. 篩選使用者 (班級 & 姓名)
+                if (String(recordClass).trim() === String(targetClass).trim() && 
+                    String(recordName).trim() === String(targetName).trim()) {
+                    
+                    // 2. 篩選本篇文章
+                    if (data.articleId == ARTICLE_CONFIG.id) {
+                        records.push({
+                            ...data,
+                            date: data.timestamp ? data.timestamp.toDate() : new Date()
+                        });
+                    }
+                }
+            });
+
+            if (records.length === 0) {
+                listDiv.innerHTML = "<p style='color:#888; text-align:center;'>尚無本篇文章的練習紀錄。</p>";
+                return;
+            }
+
+            listDiv.innerHTML = records.map(r => {
+                const dateStr = r.date.toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                const scoreClass = r.score === 100 ? 'high-score' : (r.score < 60 ? 'low-score' : '');
+                return `
+                    <div class="history-item ${scoreClass}">
+                        <div style="display:flex; align-items:center;">
+                            <div style="font-weight:bold; font-size:1.1rem; margin-right:10px; width: 50px;">${r.score}分</div>
+                            <div style="font-size:0.85rem; color:#666;">耗時 ${r.timeTakenSeconds}秒</div>
+                        </div>
+                        <div style="font-size:0.8rem; color:#999;">${dateStr}</div>
+                    </div>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error("Load History Error:", error);
+            listDiv.innerHTML = `<p style='color:red; font-size:0.8rem;'>讀取失敗，請檢查網路連線。</p>`;
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,490 @@
+/* ==========================================================================
+   PIRLS 管理後台樣式
+   ========================================================================== */
+
+:root {
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary-color: #64748b;
+    --success-color: #22c55e;
+    --background: #f8fafc;
+    --sidebar-bg: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   容器佈局
+   ========================================================================== */
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* ==========================================================================
+   側邊欄
+   ========================================================================== */
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    height: 100vh;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.logo p {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+nav {
+    margin-top: 40px;
+}
+
+.nav-item {
+    display: block;
+    padding: 12px 16px;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.stats-box {
+    margin-top: auto;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stats-box h3 {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-bottom: 8px;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* ==========================================================================
+   主內容區
+   ========================================================================== */
+.main-content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 40px;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+header h2 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+header p {
+    color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   步驟指示器
+   ========================================================================== */
+.steps-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-bottom: 40px;
+    padding: 20px;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+}
+
+.step.active {
+    opacity: 1;
+}
+
+.step.completed .step-number {
+    background: var(--success-color);
+}
+
+.step-number {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--secondary-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.step.active .step-number {
+    background: var(--primary-color);
+}
+
+.step-label {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   步驟內容
+   ========================================================================== */
+.step-content {
+    display: none;
+}
+
+.step-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================================================
+   上傳區域
+   ========================================================================== */
+.upload-zone {
+    background: var(--card-bg);
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    padding: 60px 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-bottom: 30px;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+    border-color: var(--primary-color);
+    background: #f0f9ff;
+}
+
+.upload-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.upload-zone h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.upload-zone p {
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.format-hint {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.format-hint h4 {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.format-hint ul {
+    list-style: none;
+}
+
+.format-hint li {
+    padding: 6px 0;
+    color: var(--text-secondary);
+    position: relative;
+    padding-left: 24px;
+}
+
+.format-hint li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--success-color);
+}
+
+/* ==========================================================================
+   按鈕
+   ========================================================================== */
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--background);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    justify-content: flex-end;
+}
+
+/* ==========================================================================
+   預覽區域
+   ========================================================================== */
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.preview-header h3 {
+    font-size: 1.3rem;
+}
+
+.id-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.id-input label {
+    font-weight: 500;
+}
+
+.id-input input {
+    width: 100px;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.id-input .hint {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.preview-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: var(--shadow);
+}
+
+.preview-section {
+    margin-bottom: 24px;
+}
+
+.preview-section:last-child {
+    margin-bottom: 0;
+}
+
+.preview-section h4 {
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.preview-content {
+    background: var(--background);
+    padding: 16px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.preview-content.scrollable {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.question-item {
+    padding: 12px;
+    background: white;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 3px solid var(--primary-color);
+}
+
+.question-item:last-child {
+    margin-bottom: 0;
+}
+
+.question-type {
+    font-size: 0.75rem;
+    color: white;
+    background: var(--primary-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+}
+
+/* ==========================================================================
+   成功訊息
+   ========================================================================== */
+.success-message {
+    text-align: center;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 60px 40px;
+    box-shadow: var(--shadow);
+}
+
+.success-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+}
+
+.success-message h3 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--success-color);
+}
+
+.result-info {
+    margin-bottom: 30px;
+}
+
+.result-info p {
+    padding: 8px 0;
+    color: var(--text-secondary);
+}
+
+.result-info strong {
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   響應式設計
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+        padding: 20px 15px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+        padding: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 20px;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .steps-indicator {
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .step-label {
+        display: none;
+    }
+
+    .preview-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .stats-box {
+        display: none;
+    }
+}

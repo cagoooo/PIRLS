@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PIRLS 閱讀數據中心</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #4169e1;
+            --primary-dark: #27408b;
+            --secondary-color: #2c3e50;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --danger-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --text-gray: #64748b;
+            --border-radius: 12px;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* --- 登入介面優化 --- */
+        #login-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 360px;
+            box-shadow: 0 10px 25px rgba(65, 105, 225, 0.15);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .login-box h3 { color: var(--primary-color); margin-bottom: 10px; font-size: 1.5rem; }
+        .login-box p { color: var(--text-gray); margin-bottom: 25px; font-size: 0.9rem; }
+        
+        .login-box input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        .login-box input:focus { border-color: var(--primary-color); }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-login:active { transform: scale(0.98); }
+
+        /* --- 主版面配置 --- */
+        #app-container {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px; /* 手機版底部留白 */
+        }
+
+        /* Header */
+        header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-title h1 { font-size: 1.5rem; margin: 0; color: var(--secondary-color); }
+        .header-title span { color: var(--text-gray); font-size: 0.85rem; }
+
+        .header-actions { display: flex; gap: 10px; }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-home { background: #eff6ff; color: var(--primary-color); }
+        .btn-export { background: var(--success-color); color: white; }
+        .btn:active { transform: translateY(1px); }
+
+        /* 統計卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--secondary-color); line-height: 1.2; }
+        .stat-label { color: var(--text-gray); font-size: 0.8rem; margin-top: 5px; }
+
+        /* 圖表區塊 */
+        .chart-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+        }
+
+        /* 資料列表區塊 */
+        .data-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toolbar {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            background: #fff;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 35px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            background: #f9f9f9;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #999;
+        }
+
+        /* 分頁控制區 */
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: #fff;
+            border-top: 1px solid #eee;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--secondary-color);
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            min-width: 36px;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f0f2f5;
+            border-color: #ccc;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: #f9f9f9;
+        }
+
+        .page-info {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin: 0 10px;
+            font-weight: 500;
+        }
+
+        /* RWD 表格 (Mobile Card View) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+        }
+
+        thead { background-color: #f8f9fa; }
+        th { color: #666; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; padding: 15px; }
+        
+        tr { border-bottom: 1px solid #eee; }
+        td { padding: 15px; font-size: 0.95rem; color: #444; }
+        
+        /* 標籤樣式 */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-class { background: #e3f2fd; color: var(--primary-color); }
+        .score-100 { color: var(--success-color); font-weight: bold; }
+        .score-pass { color: var(--warning-color); font-weight: bold; }
+        .score-fail { color: var(--danger-color); font-weight: bold; }
+
+        /* 手機版樣式調整 (Card View) */
+        @media screen and (max-width: 768px) {
+            .header-actions { width: 100%; }
+            .header-actions .btn { flex: 1; justify-content: center; }
+            
+            /* 強制表格變成卡片 */
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            
+            tr {
+                margin: 15px;
+                border: 1px solid #e0e0e0;
+                border-radius: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                background: #fff;
+            }
+            
+            td {
+                border: none;
+                border-bottom: 1px solid #f5f5f5;
+                position: relative;
+                padding-left: 40%;
+                text-align: right;
+                min-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+            
+            td:last-child { border-bottom: none; }
+            
+            td:before {
+                position: absolute;
+                left: 15px;
+                width: 35%;
+                padding-right: 10px;
+                white-space: nowrap;
+                text-align: left;
+                font-weight: bold;
+                color: #888;
+                font-size: 0.85rem;
+                content: attr(data-label);
+            }
+
+            .stat-value { font-size: 1.5rem; }
+        }
+
+        .loading { text-align: center; padding: 40px; color: var(--text-gray); }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px auto;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- 登入保護 -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+            <h3>教師管理後台</h3>
+            <p>請輸入密碼以存取學生數據</p>
+            <input type="password" id="admin-password" placeholder="請輸入密碼">
+            <button class="btn-login" onclick="checkPass()">登入系統</button>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <!-- 頂部導航 -->
+        <header>
+            <div class="header-title">
+                <h1>📊 閱讀數據中心</h1>
+                <span>即時監控學生作答狀況</span>
+            </div>
+            <div class="header-actions">
+                <a href="upload.html" class="btn" style="background: #8b5cf6; color: white;">📤 上傳題組</a>
+                <a href="index.html" class="btn btn-home">🏠 回首頁</a>
+                <button class="btn btn-export" onclick="exportCSV()">📥 匯出 CSV</button>
+            </div>
+        </header>
+
+        <!-- 數據統計卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-records">...</div>
+                <div class="stat-label">總作答人次</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avg-score">...</div>
+                <div class="stat-label">平均分數</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="total-students">...</div>
+                <div class="stat-label">參與人數</div>
+            </div>
+            <div class="stat-card" style="border-bottom-color: var(--success-color);">
+                <div class="stat-value" id="today-records">...</div>
+                <div class="stat-label">今日新增</div>
+            </div>
+        </div>
+
+        <!-- 圖表區 -->
+        <div class="chart-section">
+            <h3 style="margin-top:0; color:var(--secondary-color); font-size:1.1rem;">📈 成績分佈概況</h3>
+            <div style="position: relative; height: 200px; width: 100%;">
+                <canvas id="scoreChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 詳細資料列表 -->
+        <div class="data-section">
+            <div class="toolbar">
+                <h3 style="margin:0; color:var(--secondary-color); font-size:1.1rem;">📝 詳細紀錄</h3>
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" class="search-input" placeholder="搜尋姓名、班級或文章..." onkeyup="filterTable()">
+                </div>
+            </div>
+            
+            <div id="table-container">
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>時間</th>
+                            <th>班級</th>
+                            <th>姓名</th>
+                            <th>座號</th>
+                            <th>文章標題</th>
+                            <th>分數</th>
+                            <th>耗時</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- 內容由 JS 產生 -->
+                    </tbody>
+                </table>
+                <div id="loading-indicator" class="loading">
+                    <div class="loading-spinner"></div>
+                    <div>正在同步雲端資料...</div>
+                </div>
+            </div>
+
+            <!-- 分頁控制 -->
+            <div id="pagination-controls" class="pagination-container">
+                <!-- 由 JS 產生分頁按鈕 -->
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, getDocs, query, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Firebase Config
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+             apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
+             authDomain: "shimen-pirls.firebaseapp.com",
+             projectId: "shimen-pirls",
+             storageBucket: "shimen-pirls.firebasestorage.app",
+             messagingSenderId: "908294261992",
+             appId: "1:908294261992:web:948474ea7c2a662a778d5d"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let allData = []; // 儲存所有原始資料
+        let currentFilteredData = []; // 儲存目前篩選/搜尋後的資料
+        let chartInstance = null;
+        
+        // 分頁相關變數
+        let currentPage = 1;
+        const itemsPerPage = 20; // 每頁顯示 20 筆
+
+        // 密碼驗證
+        window.checkPass = function() {
+            const pass = document.getElementById('admin-password').value;
+            if(pass === '034711752' || pass === 'admin') { 
+                const overlay = document.getElementById('login-overlay');
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    document.getElementById('app-container').style.display = 'block';
+                    initData();
+                }, 300);
+            } else {
+                alert('🚫 密碼錯誤');
+            }
+        }
+
+        async function initData() {
+            try {
+                await signInAnonymously(auth);
+                loadAllResults();
+            } catch(e) {
+                console.error("Auth failed", e);
+                document.getElementById('loading-indicator').innerHTML = "⚠️ 資料庫連線失敗";
+            }
+        }
+
+        async function loadAllResults() {
+            const loading = document.getElementById('loading-indicator');
+            
+            try {
+                // 讀取所有資料 (不使用 limit 限制)
+                const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results'), orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                allData = [];
+                let totalScore = 0;
+                let uniqueStudents = new Set();
+                let todayCount = 0;
+                const today = new Date().toDateString();
+                
+                let scoreCounts = { 100: 0, 75: 0, 50: 0, 25: 0, 0: 0 };
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    let className = data.classId || data.class || "未分班";
+                    
+                    let dateStr = "--/-- --:--";
+                    let dateObj = null;
+                    if(data.timestamp) {
+                        dateObj = data.timestamp.toDate();
+                        dateStr = `${dateObj.getMonth()+1}/${dateObj.getDate()} ${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`;
+                        if(dateObj.toDateString() === today) todayCount++;
+                    }
+
+                    const score = data.score !== undefined ? Number(data.score) : 0;
+                    
+                    if (scoreCounts.hasOwnProperty(score)) {
+                        scoreCounts[score]++;
+                    } else {
+                         if(score > 87) scoreCounts[100]++;
+                         else if(score > 62) scoreCounts[75]++;
+                         else if(score > 37) scoreCounts[50]++;
+                         else if(score > 12) scoreCounts[25]++;
+                         else scoreCounts[0]++;
+                    }
+
+                    const record = {
+                        id: doc.id,
+                        time: dateStr,
+                        rawDate: dateObj,
+                        class: className,
+                        name: data.studentName || "未具名",
+                        seat: data.seatNumber || "",
+                        title: data.articleTitle || `文章 ${data.articleId}`,
+                        score: score,
+                        duration: data.timeTakenSeconds || 0
+                    };
+
+                    allData.push(record);
+                    totalScore += record.score;
+                    if(record.name !== "未具名") uniqueStudents.add(record.name + record.class); 
+                });
+
+                loading.style.display = 'none';
+                
+                // 初始化顯示資料與統計
+                currentFilteredData = allData;
+                renderTable(); // 渲染表格 (包含分頁邏輯)
+                updateStats(allData.length, totalScore, uniqueStudents.size, todayCount);
+                renderChart(scoreCounts);
+
+            } catch (e) {
+                console.error("Load data error:", e);
+                loading.innerHTML = "<span style='color:red'>讀取資料失敗，請稍後再試。</span>";
+            }
+        }
+
+        // 核心渲染函式：負責切分資料並產生分頁
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            const paginationDiv = document.getElementById('pagination-controls');
+            
+            if(currentFilteredData.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; padding:30px;'>尚無資料</td></tr>";
+                paginationDiv.innerHTML = "";
+                return;
+            }
+
+            // 計算總頁數
+            const totalPages = Math.ceil(currentFilteredData.length / itemsPerPage);
+            
+            // 確保 currentPage 在有效範圍內
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            // 計算當前頁面要顯示的資料範圍
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const displayData = currentFilteredData.slice(start, end);
+
+            // 產生表格 HTML
+            tbody.innerHTML = displayData.map(row => {
+                let scoreClass = 'score-fail';
+                let scoreIcon = '';
+                if(row.score === 100) { scoreClass = 'score-100'; scoreIcon = '🏆'; }
+                else if(row.score >= 60) { scoreClass = 'score-pass'; }
+
+                return `
+                    <tr>
+                        <td data-label="時間">${row.time}</td>
+                        <td data-label="班級"><span class="badge badge-class">${row.class}</span></td>
+                        <td data-label="姓名" style="font-weight:bold;">${row.name}</td>
+                        <td data-label="座號">${row.seat}</td>
+                        <td data-label="文章">${row.title}</td>
+                        <td data-label="分數" class="${scoreClass}">${scoreIcon} ${row.score}</td>
+                        <td data-label="耗時">${row.duration}秒</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // 產生分頁按鈕
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const div = document.getElementById('pagination-controls');
+            
+            // 如果只有一頁或沒資料，只顯示筆數
+            if (totalPages <= 1) {
+                div.innerHTML = `<span class="page-info">共 ${currentFilteredData.length} 筆資料</span>`;
+                return;
+            }
+
+            let html = `
+                <button class="page-btn" onclick="changePage(1)" ${currentPage === 1 ? 'disabled' : ''}>&lt;&lt;</button>
+                <button class="page-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button>
+            `;
+
+            // 智慧分頁顯示 (只顯示當前頁面附近的頁碼)
+            const maxVisibleButtons = 5;
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + maxVisibleButtons - 1);
+
+            // 調整邊界情況
+            if (endPage - startPage < maxVisibleButtons - 1) {
+                startPage = Math.max(1, endPage - maxVisibleButtons + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+
+            html += `
+                <button class="page-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button>
+                <button class="page-btn" onclick="changePage(${totalPages})" ${currentPage === totalPages ? 'disabled' : ''}>&gt;&gt;</button>
+                <span class="page-info">第 ${currentPage} / ${totalPages} 頁 (共 ${currentFilteredData.length} 筆)</span>
+            `;
+
+            div.innerHTML = html;
+        }
+
+        // 全域函式供 HTML onclick 呼叫
+        window.changePage = function(page) {
+            currentPage = page;
+            renderTable();
+            // 切換頁面後自動回到表格頂端
+            document.querySelector('.data-section').scrollIntoView({behavior: 'smooth'});
+        }
+
+        window.filterTable = function() {
+            const input = document.getElementById('search-input').value.toLowerCase();
+            
+            // 重新篩選資料
+            currentFilteredData = allData.filter(item => 
+                item.name.toLowerCase().includes(input) || 
+                item.class.toLowerCase().includes(input) ||
+                item.title.toLowerCase().includes(input)
+            );
+            
+            // 搜尋後重置回第一頁
+            currentPage = 1;
+            renderTable();
+        }
+
+        function updateStats(count, totalScore, studentCount, todayCount) {
+            const animateValue = (id, end) => {
+                const el = document.getElementById(id);
+                if(el) el.textContent = end;
+            };
+            animateValue('total-records', count);
+            animateValue('avg-score', count > 0 ? Math.round(totalScore / count) : 0);
+            animateValue('total-students', studentCount);
+            animateValue('today-records', todayCount);
+        }
+
+        function renderChart(scoreCounts) {
+            const ctx = document.getElementById('scoreChart').getContext('2d');
+            
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            const labels = ['100分 (全對)', '75分 (錯1題)', '50分 (錯2題)', '25分 (錯3題)', '0分 (全錯)'];
+            const data = [
+                scoreCounts[100],
+                scoreCounts[75],
+                scoreCounts[50],
+                scoreCounts[25],
+                scoreCounts[0]
+            ];
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '人數',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(39, 174, 96, 0.7)',
+                            'rgba(41, 128, 185, 0.7)',
+                            'rgba(243, 156, 18, 0.7)',
+                            'rgba(231, 76, 60, 0.7)',
+                            'rgba(192, 57, 43, 0.7)'
+                        ],
+                        borderRadius: 5,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `人數: ${context.raw}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { display: true, color: '#f0f0f0' },
+                            ticks: { precision: 0 } 
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        window.exportCSV = function() {
+            // 匯出功能使用 currentFilteredData，這樣如果目前有搜尋，就只會匯出搜尋結果
+            // 如果想要永遠匯出「所有」資料，請改用 allData
+            const dataToExport = currentFilteredData.length > 0 ? currentFilteredData : allData;
+
+            if(dataToExport.length === 0) {
+                alert("沒有資料可匯出");
+                return;
+            }
+            
+            let csvContent = "\uFEFF"; 
+            csvContent += "作答時間,班級,姓名,座號,文章標題,分數,耗時(秒)\n";
+
+            dataToExport.forEach(row => {
+                const title = `"${row.title.replace(/"/g, '""')}"`; 
+                const timeStr = row.rawDate ? `"${row.rawDate.getFullYear()}/${row.rawDate.getMonth()+1}/${row.rawDate.getDate()} ${String(row.rawDate.getHours()).padStart(2,'0')}:${String(row.rawDate.getMinutes()).padStart(2,'0')}"` : "";
+                
+                csvContent += `${timeStr},${row.class},${row.name},${row.seat},${title},${row.score},${row.duration}\n`;
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            const timestamp = new Date().toISOString().slice(0,10).replace(/-/g,"");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `PIRLS_成績匯出_${timestamp}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>

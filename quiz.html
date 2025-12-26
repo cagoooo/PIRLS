@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PIRLS 閱讀理解測驗</title>
+    <link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+
+<body>
+
+    <!-- 登入模態框 -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="login-card">
+            <h2 style="text-align: center; color: var(--primary-color);">閱讀挑戰登入</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 20px;">請輸入資料以紀錄成績</p>
+
+            <div class="form-group">
+                <label>班級選擇</label>
+                <div class="select-row">
+                    <select id="gradeSelect" class="form-control">
+                        <option value="" disabled selected>年級</option>
+                        <option value="一">一年級</option>
+                        <option value="二">二年級</option>
+                        <option value="三">三年級</option>
+                        <option value="四">四年級</option>
+                        <option value="五">五年級</option>
+                        <option value="六">六年級</option>
+                        <option value="特教">特教班</option>
+                        <option value="科任">科任教室</option>
+                    </select>
+                    <select id="classNumberSelect" class="form-control">
+                        <option value="" disabled selected>班級</option>
+                        <!-- JS 生成 -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="studentName">姓名</label>
+                <input type="text" id="studentName" class="form-control" placeholder="請輸入姓名">
+            </div>
+
+            <div class="form-group">
+                <label for="seatNumber">座號 (選填)</label>
+                <input type="tel" id="seatNumber" class="form-control" placeholder="例如: 05">
+            </div>
+
+            <button class="submit-btn" onclick="saveUserInfo()">開始測驗</button>
+        </div>
+    </div>
+
+    <!-- 手機版頂部資訊列 -->
+    <div id="user-info-bar">
+        <div>
+            <span style="font-weight: bold; color: var(--primary-color);">👤 <span
+                    id="mobile-user-name">未登入</span></span>
+        </div>
+        <div>
+            <button onclick="resetUser()"
+                style="background: #f0f0f0; border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; color: #555;">🔄 切換</button>
+            <a href="index.html" class="btn-home-link"
+                style="margin-left: 8px; color: var(--secondary-color); text-decoration: none; font-weight: bold;">🏠
+                🏠 首頁</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 左側欄 -->
+        <div id="left-column" class="column">
+            <h2>使用指南</h2>
+
+            <!-- 桌機版使用者資訊 -->
+            <div id="desktop-user-info"
+                style="margin-bottom: 20px; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px;">目前使用者</div>
+                <div id="desktop-user-name" style="font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">未登入</div>
+                <button onclick="resetUser()"
+                    style="background: transparent; border: 1px solid white; color: white; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; width: 100%;">🔄 切換使用者</button>
+                <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
+                    <a href="index.html" class="btn-home-link" style="color: white; text-decoration: none; display: block;">← 🏠 返回文章列表</a>
+                </div>
+            </div>
+
+            <div class="step">
+                <h3>步驟 1</h3>
+                <p>仔細閱讀中間的文章，注意細節。</p>
+            </div>
+            <div class="step">
+                <h3>步驟 2</h3>
+                <p>回答右側的問題。</p>
+            </div>
+            <div class="step">
+                <h3>步驟 3</h3>
+                <p>提交後，系統會自動儲存您的成績。</p>
+            </div>
+        </div>
+
+        <!-- 中間欄 -->
+        <div id="center-column" class="column">
+            <h1 id="article-title-display">載入中...</h1>
+
+            <div id="article-body">
+                <!-- 骨架屏載入動畫 (v1.7) -->
+                <div class="skeleton-loader">
+                    <div class="skeleton-title"></div>
+                    <div class="skeleton-paragraph"></div>
+                    <div class="skeleton-paragraph"></div>
+                    <div class="skeleton-paragraph short"></div>
+                </div>
+            </div>
+
+            <!-- 本次成績顯示區 -->
+            <div id="current-stats"
+                style="display:none; background-color: #f0f8ff; padding: 20px; border-radius: 10px; margin-top: 30px; border: 1px solid #b3d7ff;">
+                <!-- 這裡顯示本次成績 -->
+            </div>
+        </div>
+
+        <!-- 右側欄 -->
+        <div id="right-column" class="column">
+            <h2>閱讀理解問題</h2>
+
+        <!-- 答題進度指示器 (v1.7 新增) -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="progress-text" id="progressText">0/0 題已作答</span>
+                <span class="progress-percent" id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- Progress Indicator (v1.7) -->
+        <div class="progress-container">
+            <div class="progress-header">
+                <span class="progress-text" id="progressText">0/0 questions answered</span>
+                <span class="progress-percent" id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+            <div id="questions-container">
+                <!-- 骨架屏載入動畫 (v1.7) -->
+                <div class="skeleton-loader">
+                    <div class="skeleton-question"></div>
+                    <div class="skeleton-option"></div>
+                    <div class="skeleton-option"></div>
+                    <div class="skeleton-option"></div>
+                    <div class="skeleton-question"></div>
+                    <div class="skeleton-option"></div>
+                    <div class="skeleton-option"></div>
+                    <div class="skeleton-option"></div>
+                </div>
+            </div>
+
+            <button class="submit-btn" id="submitBtn" onclick="checkAnswers()">提交答案</button>
+
+            <div id="history-section">
+                <h3>📝 您的歷史紀錄 (本篇)</h3>
+                <div id="history-list">載入中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/quiz.js"></script>
+</body>
+
+</html>

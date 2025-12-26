@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>石門國小PIRLS閱讀理解入口網</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(45deg, #ff0844, #ffb199, #ff1361, #ff3d7f);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        #header-container {
+            text-align: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 頂部工具列：包含歡迎詞與匯出按鈕 */
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 使用者歡迎標籤 */
+        #user-greeting-badge {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            backdrop-filter: blur(5px);
+            font-size: 0.95rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+            /* JS 控制顯示 */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s;
+            cursor: default;
+        }
+
+        #user-greeting-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 按鈕通用樣式 */
+        .action-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: none;
+            /* JS 控制顯示 */
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn.loading {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        /* 匯出按鈕 (個人) */
+        #export-btn {
+            background: #ffffff;
+            color: #ff1361;
+        }
+
+        #export-btn:hover {
+            background: #fff0f5;
+        }
+
+        /* 登出按鈕 */
+        #logout-btn {
+            background: #ff4757;
+            color: white;
+        }
+
+        #logout-btn:hover {
+            background: #ff6b81;
+        }
+
+        /* 隱藏的管理員匯出按鈕 (右下角) */
+        #admin-trigger {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            font-size: 2rem;
+            opacity: 0.1;
+            /* 平常幾乎看不見 */
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 9999;
+            user-select: none;
+        }
+
+        #admin-trigger:hover {
+            opacity: 1;
+            /* 滑鼠移過去變明顯 */
+            transform: scale(1.2);
+        }
+
+        /* 隱藏的後台連結按鈕 (左下角) */
+        #admin-link-btn {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            font-size: 2rem;
+            opacity: 0.1;
+            /* 平常幾乎看不見 */
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 9999;
+            user-select: none;
+        }
+
+        #admin-link-btn:hover {
+            opacity: 1;
+            /* 滑鼠移過去變明顯 */
+            transform: scale(1.2);
+        }
+
+        #mainTitle {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            margin: 0;
+            padding-top: 10px;
+            text-align: center;
+        }
+
+        /* 手機版標題調整 */
+        @media (max-width: 768px) {
+            #mainTitle {
+                font-size: 2.2rem;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                align-items: center;
+                margin-bottom: 15px;
+            }
+
+            #header-container {
+                margin-top: 1rem;
+            }
+        }
+
+        #total-stats {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 1.5rem;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        #total-stats:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        #total-count {
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-left: 0.5rem;
+            color: #fff700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: 'Courier New', Courier, monospace;
+            /* 數字風格 */
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1;
+            /* 確保在粒子之上 */
+        }
+
+        .grid-item {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .grid-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+            background-color: #fff;
+            border-color: #ff3d7f;
+        }
+
+        .grid-item:active {
+            transform: scale(0.98);
+        }
+
+        .article-content {
+            padding: 1.5rem 1.5rem 0.5rem 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .article-title {
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.5;
+            color: #444;
+            margin-bottom: 10px;
+        }
+
+        .grid-item:hover .article-title {
+            color: #ff1361;
+        }
+
+        /* 全站統計與個人統計的分隔 */
+        .stats-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .article-public-stats {
+            padding: 0.6rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 個人成績區塊 - RWD 優化 */
+        .user-personal-stats {
+            padding: 0.6rem 1.2rem;
+            background-color: #e8f5e9;
+            /* 淺綠色背景 */
+            font-size: 0.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            /* 允許換行 */
+            justify-content: space-between;
+            align-items: center;
+            min-height: 42px;
+            gap: 5px;
+        }
+
+        .view-count-badge {
+            font-weight: bold;
+            color: #ff3d7f;
+            background: rgba(255, 61, 127, 0.1);
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* 分數與時間標籤 */
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .score-text {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .time-text {
+            color: #1565c0;
+            /* 藍色 */
+        }
+
+        .count-text {
+            color: #e65100;
+            /* 橘色 */
+            font-size: 0.75rem;
+        }
+
+        .no-record {
+            color: #999;
+            font-style: italic;
+            width: 100%;
+            text-align: center;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff1361;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+
+    <div id="header-container">
+        <!-- 頂部工具列：包含歡迎詞與匯出按鈕 -->
+        <div class="top-bar">
+            <div id="user-greeting-badge"></div>
+            <button id="export-btn" class="action-btn" onclick="exportUserRecords()">
+                📥 匯出我的歷程
+            </button>
+            <button id="logout-btn" class="action-btn" onclick="logoutUser()">
+                🚪 登出
+            </button>
+        </div>
+
+        <h1 id="mainTitle">
+            石門國小PIRLS閱讀理解網
+        </h1>
+        <div id="total-stats">
+            全站累積閱讀人次：<span id="total-count">載入中...</span>
+        </div>
+    </div>
+
+
+    <!-- v1.8: Completion Status Filter -->
+    <div class="filter-status-container">
+        <h3>📊 學習進度篩選：</h3>
+        <div class="status-filters">
+            <button class="status-btn active" data-filter="all">
+                📚 全部 (<span id="countAll">47</span>)
+            </button>
+            <button class="status-btn" data-filter="completed">
+                ✅ 已完成 (<span id="countCompleted">0</span>)
+            </button>
+            <button class="status-btn" data-filter="uncompleted">
+                ⏳ 未完成 (<span id="countUncompleted">47</span>)
+            </button>
+        </div>
+    </div>
+
+    <div class="grid-container" id="article-grid">
+        <!-- JavaScript 產生文章卡片 -->
+    </div>
+
+    <!-- 隱藏的管理者 Emoji 按鈕 (原有功能: 匯出) - 右下角 -->
+    <div id="admin-trigger" onclick="adminExportTrigger()">🥸</div>
+
+    <!-- 新增：隱藏的後台連結 Emoji 按鈕 (功能: 跳轉到 admin.html) - 左下角 -->
+    <div id="admin-link-btn" onclick="window.location.href='admin.html'">⚙️</div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loader"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, onSnapshot, updateDoc, increment, setDoc, getDoc, query, where, getDocs, orderBy, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Firebase 設定
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
+            authDomain: "shimen-pirls.firebaseapp.com",
+            projectId: "shimen-pirls",
+            storageBucket: "shimen-pirls.firebasestorage.app",
+            messagingSenderId: "908294261992",
+            appId: "1:908294261992:web:948474ea7c2a662a778d5d"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const COLLECTION_NAME = 'pirls_stats';
+
+        // 文章資料 - 動態從 questions.json 載入
+        let articles = [];
+        
+        // 初始載入
+        (async function() {
+            try {
+                const response = await fetch('/data/questions.json');
+                if (response.ok) {
+                    const allQuestions = await response.json();
+                    articles = allQuestions.map(q => ({ id: q.id, title: q.title }));
+                    console.log(`[動態載入] 成功載入 ${articles.length} 篇文章`);
+                    if (document.getElementById('article-grid')) {
+                        renderGrid();
+                    }
+                } else {
+                    console.warn('[動態載入] questions.json 載入失敗，使用降級資料');
+                    articles = Array.from({length: 47}, (_, i) => ({ id: i+1, title: `篇章 ${i+1}` }));
+                }
+            } catch (e) {
+                console.error('[動態載入] 錯誤:', e);
+                articles = Array.from({length: 47}, (_, i) => ({ id: i+1, title: `篇章 ${i+1}` }));
+            }
+        })();
+
+        // v1.8: Completion Status Filter Logic
+        let completedArticleIds = new Set();
+        let currentUser = null;
+        let currentFilter = 'all';
+
+        async function loadCompletedArticles() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            if (!storedUser) {
+                console.log('No user logged in, skipping completion check');
+                return;
+            }
+
+            try {
+                currentUser = JSON.parse(storedUser);
+                
+                // 使用與 quiz.js loadHistory() 相同的路徑和邏輯
+                const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+                const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+
+                const snapshot = await getDocs(q);
+                completedArticleIds.clear();
+
+                const targetClass = currentUser.class;
+                const targetName = currentUser.name;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    const recordClass = data.classId || data.class || "";
+                    const recordName = data.studentName || data.name || "";
+
+                    // 比對班級和姓名
+                    if (String(recordClass).trim() === String(targetClass).trim() &&
+                        String(recordName).trim() === String(targetName).trim()) {
+                        
+                        if (data.articleId) {
+                            completedArticleIds.add(parseInt(data.articleId));
+                        }
+                    }
+                });
+
+                console.log(`Found ${completedArticleIds.size} completed articles for ${targetClass} ${targetName}`);
+                updateArticleStatus();
+            } catch (error) {
+                console.error('Error loading completed articles:', error);
+            }
+        }
+
+        function updateArticleStatus() {
+            const cards = document.querySelectorAll('.grid-item');
+            let totalCount = cards.length;
+            let completedCount = 0;
+            let uncompletedCount = 0;
+
+            cards.forEach(card => {
+                const articleId = parseInt(card.dataset.articleId);
+                const badge = card.querySelector('.completion-badge');
+
+                if (completedArticleIds.has(articleId)) {
+                    card.dataset.completed = 'true';
+                    if (badge) badge.classList.add('show');
+                    completedCount++;
+                } else {
+                    card.dataset.completed = 'false';
+                    if (badge) badge.classList.remove('show');
+                    uncompletedCount++;
+                }
+            });
+
+            // Update counts
+            const countAll = document.getElementById('countAll');
+            const countCompleted = document.getElementById('countCompleted');
+            const countUncompleted = document.getElementById('countUncompleted');
+
+            if (countAll) countAll.textContent = totalCount;
+            if (countCompleted) countCompleted.textContent = completedCount;
+            if (countUncompleted) countUncompleted.textContent = uncompletedCount;
+
+            // Apply current filter
+            applyFilter(currentFilter);
+        }
+
+        function applyFilter(filter) {
+            currentFilter = filter;
+            const cards = document.querySelectorAll('.grid-item');
+
+            cards.forEach(card => {
+                const isCompleted = card.dataset.completed === 'true';
+
+                if (filter === 'all') {
+                    card.style.display = 'block';
+                } else if (filter === 'completed') {
+                    card.style.display = isCompleted ? 'block' : 'none';
+                } else if (filter === 'uncompleted') {
+                    card.style.display = isCompleted ? 'none' : 'block';
+                }
+            });
+
+            // Update button states
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Initialize filter buttons
+        function initializeFilterButtons() {
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    applyFilter(this.dataset.filter);
+                });
+            });
+        }
+
+
+
+        // 工具函式：數字轉中文
+        function numberToChinese(num) {
+            const digits = ['', '一', '二', '三', '四', '五', '六', '七', '八', '九'];
+            const n = parseInt(num);
+            if (isNaN(n)) return '';
+            if (n <= 0) return '';
+            if (n < 10) return digits[n];
+            if (n < 20) return '十' + digits[n % 10];
+            if (n < 100) {
+                const ten = Math.floor(n / 10);
+                const unit = n % 10;
+                return digits[ten] + '十' + digits[unit];
+            }
+            return num.toString();
+        }
+
+        // 工具函式：格式化班級字串 (e.g. 1, 2 -> 一年二班)
+        function formatGradeClass(grade, cls) {
+            const gNum = parseInt(grade);
+            const cNum = parseInt(cls);
+
+            // 1. 嘗試標準轉換 (數字 -> 中文)
+            if (!isNaN(gNum) && !isNaN(cNum)) {
+                return `${numberToChinese(gNum)}年${numberToChinese(cNum)}班`;
+            }
+
+            // 2. 如果輸入已經包含中文 (e.g. "一年", "1班")，做簡單清理合併
+            const gStr = String(grade || "");
+            const cStr = String(cls || "");
+
+            if (gStr.includes('年') || cStr.includes('班')) {
+                // 避免出現 "一年年" 或 "一班班"
+                const cleanG = gStr.endsWith('年') ? gStr : gStr + '年';
+                const cleanC = cStr.endsWith('班') ? cStr : cStr + '班';
+                return `${cleanG}${cleanC}`;
+            }
+
+            // 3. 萬一無法解析，回傳原始組合
+            return `${grade}年${cls}班`;
+        }
+
+        // ----- 登出功能 -----
+        window.logoutUser = async function () {
+            console.log("logoutUser function called!"); // DEBUG
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            console.log("storedUser:", storedUser); // DEBUG
+            console.log("auth.currentUser:", auth.currentUser); // DEBUG
+
+            if (!storedUser && !auth.currentUser) {
+                alert("目前尚未登入。");
+                return;
+            }
+
+            // 直接執行登出，移除confirm對話框（因為被瀏覽器阻止）
+            console.log("Executing logout..."); // DEBUG
+            localStorage.removeItem('shimen_pirls_user');
+            try {
+                await signOut(auth);
+                console.log("Firebase signOut successful"); // DEBUG
+            } catch (e) {
+                console.log("Sign out error (ignored):", e);
+            }
+            console.log("Reloading page..."); // DEBUG
+            window.location.reload();
+        };
+
+        // ----- 管理者後台匯出功能 (強力補全版) -----
+        // 注意：此功能保留但內部邏輯也改為讀取 public data 以保持一致
+        window.adminExportTrigger = async function () {
+            const password = prompt("🔒 管理者專用\n請輸入後台驗證密碼：");
+            if (password !== "034711752") {
+                if (password !== null) alert("密碼錯誤！");
+                return;
+            }
+
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('active');
+
+            try {
+                // 1. 撈取 Public Stats (文章點閱數)
+                const statsSnapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME));
+                const articleStats = {};
+                statsSnapshot.forEach(doc => {
+                    const aid = doc.id.replace('pirls_', '');
+                    articleStats[aid] = doc.data().count || 0;
+                });
+
+                // 2. 撈取所有作答紀錄 (改用 public data 路徑，與 admin.html 一致)
+                const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+                // 預設依時間排序
+                const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+
+                if (querySnapshot.empty) {
+                    alert("資料庫中目前沒有任何作答紀錄。");
+                    overlay.classList.remove('active');
+                    return;
+                }
+
+                // 產生 CSV
+                let csvContent = "\uFEFF";
+                csvContent += "=== 學生作答明細表 ===\n";
+                csvContent += "班級,姓名,文章編號,文章標題,分數,作答時間(秒),作答日期,作答時段(24H區間)\n";
+
+                const summary = { totalAttempts: 0, totalScore: 0, articleUsage: {} };
+
+                querySnapshot.forEach(doc => {
+                    const data = doc.data();
+                    // admin.html 邏輯：data.classId || data.class
+                    const rawClass = data.classId || data.class || "未分班";
+                    const rawName = data.studentName || data.name || "未具名";
+
+                    const aid = data.articleId;
+                    const title = data.articleTitle || articles.find(a => a.id == aid)?.title || `文章 ${aid}`;
+
+                    let dateStr = "N/A";
+                    let timeRangeStr = "N/A";
+
+                    if (data.timestamp) {
+                        const dateDate = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+                        dateStr = dateDate.toLocaleString('zh-TW', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                        const hour = dateDate.getHours();
+                        const hourStr = String(hour).padStart(2, '0');
+                        timeRangeStr = `${hourStr}:00~${hourStr}:59`;
+                    }
+
+                    const row = [
+                        `"${rawClass}"`,
+                        `"${rawName}"`,
+                        aid,
+                        `"${title}"`,
+                        data.score || 0,
+                        data.timeTakenSeconds || 0,
+                        `"${dateStr}"`,
+                        `"${timeRangeStr}"`
+                    ];
+                    csvContent += row.join(",") + "\n";
+
+                    summary.totalAttempts++;
+                    summary.totalScore += (data.score || 0);
+
+                    if (!summary.articleUsage[aid]) summary.articleUsage[aid] = { attempts: 0, sumScore: 0, sumTime: 0 };
+                    summary.articleUsage[aid].attempts++;
+                    summary.articleUsage[aid].sumScore += (data.score || 0);
+                    summary.articleUsage[aid].sumTime += (data.timeTakenSeconds || 0);
+                });
+
+                csvContent += "\n\n=== 各文章全站統計數據 ===\n";
+                csvContent += "文章編號,文章標題,全站累積點擊人次(View),總作答次數,平均正確率(分數),平均作答時間(秒)\n";
+
+                articles.forEach(article => {
+                    const stat = summary.articleUsage[article.id] || { attempts: 0, sumScore: 0, sumTime: 0 };
+                    const viewCount = articleStats[article.id] || 0;
+                    const avgScore = stat.attempts ? (stat.sumScore / stat.attempts).toFixed(1) : 0;
+                    const avgTime = stat.attempts ? (stat.sumTime / stat.attempts).toFixed(1) : 0;
+
+                    csvContent += `${article.id},"${article.title}",${viewCount},${stat.attempts},${avgScore},${avgTime}\n`;
+                });
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                const now = new Date();
+                const timeStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+                link.setAttribute("download", `PIRLS_FULL_ADMIN_EXPORT_${timeStr}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (e) {
+                console.error("Admin Export Error:", e);
+                alert("匯出失敗，可能原因：\n1. 權限不足\n2. 網路連線問題\n" + e.message);
+            } finally {
+                overlay.classList.remove('active');
+            }
+        };
+
+        // ----- 個人匯出功能 (修正版：讀取 Public Data 並前端篩選) -----
+        window.exportUserRecords = async function () {
+            const exportBtn = document.getElementById('export-btn');
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+
+            if (!storedUser) {
+                alert("目前尚未登入。");
+                return;
+            }
+
+            const userInfo = JSON.parse(storedUser);
+            // 目標班級與姓名
+            const targetClass = userInfo.class;
+            const targetName = userInfo.name;
+
+            if (!targetClass || !targetName) {
+                alert("使用者資訊不完整，請重新登入。");
+                return;
+            }
+
+            try {
+                exportBtn.disabled = true;
+                exportBtn.classList.add('loading');
+                exportBtn.textContent = '⏳ 資料搜尋中...';
+
+                // 讀取所有 Public Results
+                // 注意：雖然這是讀取「全部」，但我們只在前端過濾出屬於該使用者的。
+                // 這保證了與 Admin 後台看到的一致性。
+                const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+                const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) {
+                    alert("目前沒有任何作答紀錄。");
+                    resetBtn();
+                    return;
+                }
+
+                let csvContent = "\uFEFF";
+                csvContent += "學生班級,學生姓名,文章編號,文章標題,測驗分數,作答耗時(秒),紀錄時間\n";
+
+                let foundCount = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+
+                    // 欄位比對 (參考 admin.html)
+                    const recordClass = data.classId || data.class || "";
+                    const recordName = data.studentName || data.name || "";
+
+                    // 寬鬆比對 (trim 去空白)
+                    if (String(recordClass).trim() == String(targetClass).trim() &&
+                        String(recordName).trim() == String(targetName).trim()) {
+
+                        foundCount++;
+
+                        const aid = data.articleId;
+                        const title = data.articleTitle || articles.find(a => a.id == aid)?.title || `文章 ${aid}`;
+
+                        // 格式化班級
+                        let finalClassStr = recordClass;
+                        if (userInfo.grade && userInfo.class) {
+                            finalClassStr = formatGradeClass(userInfo.grade, userInfo.class);
+                        }
+
+                        let dateStr = "N/A";
+                        if (data.timestamp) {
+                            if (data.timestamp.toDate) dateStr = data.timestamp.toDate().toLocaleString('zh-TW');
+                            else if (typeof data.timestamp === 'string') dateStr = new Date(data.timestamp).toLocaleString('zh-TW');
+                        }
+
+                        const row = [
+                            `"${finalClassStr}"`,
+                            `"${recordName}"`,
+                            aid,
+                            `"${title}"`,
+                            data.score || 0,
+                            data.timeTakenSeconds || 0,
+                            `"${dateStr}"`
+                        ];
+                        csvContent += row.join(",") + "\n";
+                    }
+                });
+
+                if (foundCount === 0) {
+                    alert(`查無 [${targetClass} ${targetName}] 的作答紀錄。\n請確認您登入的班級姓名是否與之前作答時完全一致。`);
+                    resetBtn();
+                    return;
+                }
+
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                const today = new Date().toISOString().split('T')[0];
+                link.setAttribute("download", `PIRLS歷程_${userInfo.name}_${today}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (e) {
+                console.error("Export failed:", e);
+                alert("匯出失敗，請稍後再試。\n" + e.message);
+            } finally {
+                resetBtn();
+            }
+
+            function resetBtn() {
+                exportBtn.disabled = false;
+                exportBtn.classList.remove('loading');
+                exportBtn.innerHTML = '📥 匯出我的歷程';
+            }
+        };
+
+        // 處理上一頁快取問題
+        window.addEventListener('pageshow', (event) => {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.classList.remove('active');
+            checkUserGreeting();
+            if (localStorage.getItem('shimen_pirls_user')) {
+                loadUserProgress();
+            }
+        });
+
+        // 檢查 LocalStorage 中的使用者資訊
+        function checkUserGreeting() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            const badge = document.getElementById('user-greeting-badge');
+            const exportBtn = document.getElementById('export-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+
+            if (storedUser) {
+                try {
+                    const user = JSON.parse(storedUser);
+                    let displayClass = user.class;
+                    if (user.grade && user.class) {
+                        displayClass = formatGradeClass(user.grade, user.class);
+                    }
+
+                    badge.style.display = 'inline-block';
+                    badge.innerHTML = `👋 歡迎回來，${displayClass} ${user.name}`;
+                    if (exportBtn) exportBtn.style.display = 'inline-flex';
+                    if (logoutBtn) logoutBtn.style.display = 'inline-flex';
+                    return true;
+                } catch (e) {
+                    console.warn("User data corrupted", e);
+                    badge.style.display = 'none';
+                    if (exportBtn) exportBtn.style.display = 'none';
+                    if (logoutBtn) logoutBtn.style.display = 'none';
+                    return false;
+                }
+            } else {
+                badge.style.display = 'none';
+                if (exportBtn) exportBtn.style.display = 'none';
+                if (logoutBtn) logoutBtn.style.display = 'none';
+                return false;
+            }
+        }
+
+        // 渲染卡片
+        const gridContainer = document.getElementById('article-grid');
+        function renderGrid() {
+            gridContainer.innerHTML = articles.map(article => `
+                <div class="grid-item" id="card-${article.id}" data-article-id="${article.id}" data-completed="false">
+                    <div class="completion-badge" style="display: none;">
+                        <span>✅ 已完成</span>
+                    </div>
+                    <div class="article-content">
+                        <div class="article-title">${article.title}</div>
+                    </div>
+                    
+                    <div class="stats-container">
+                        <div class="article-public-stats">
+                            <span>篇章 ${article.id}</span>
+                            <span class="view-count-badge" id="badge-${article.id}">
+                                👁️ <span id="count-${article.id}">--</span>
+                            </span>
+                        </div>
+                        <div class="user-personal-stats" id="user-stat-${article.id}">
+                            <span class="no-record">尚未作答</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            articles.forEach(article => {
+                const card = document.getElementById(`card-${article.id}`);
+                card.addEventListener('click', () => handleArticleClick(article.id));
+            });
+        }
+
+        // 點擊處理
+        async function handleArticleClick(id) {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            // 移除身份確認對話框，讓使用者直接進入文章
+
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('active');
+
+            if (!auth.currentUser) {
+                try { await signInAnonymously(auth); } catch (e) { console.log("Auth warning:", e); }
+            }
+
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME, `pirls_${id}`);
+            setDoc(docRef, {
+                count: increment(1),
+                title: articles.find(a => a.id === id).title
+            }, { merge: true }).catch(err => {
+                console.warn("Background count update error:", err);
+            });
+
+            setTimeout(() => {
+                window.location.href = `quiz.html?id=${id}`;
+            }, 200);
+        }
+
+        // 訂閱統計數據 (全站)
+        function subscribeToStats() {
+            const statsCollection = collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME);
+
+            onSnapshot(statsCollection, (snapshot) => {
+                let totalViews = 0;
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const idStr = doc.id.replace('pirls_', '');
+                    const countElement = document.getElementById(`count-${idStr}`);
+                    const countVal = data.count || 0;
+
+                    if (countElement) {
+                        countElement.textContent = countVal.toLocaleString();
+                    }
+                    totalViews += countVal;
+                });
+                document.getElementById('total-count').textContent = totalViews.toLocaleString();
+            }, (error) => {
+                console.warn("Stats Listener Error (Will retry):", error);
+                document.getElementById('total-count').textContent = "---";
+            });
+        }
+
+        // 載入使用者個人進度 (修正版：讀取 Public Data 並前端篩選)
+        async function loadUserProgress() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            if (!storedUser) return;
+
+            const userInfo = JSON.parse(storedUser);
+            const targetClass = userInfo.class;
+            const targetName = userInfo.name;
+
+            if (!targetClass || !targetName) return;
+
+            try {
+                // 與 admin.html 保持一致，讀取 public/data/quiz_results
+                // 這是關鍵修正點
+                const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+                // 為了效能，也許可以只撈最近的，但為了完整性先撈全部
+                // admin.html 也是撈全部，所以這裡效能應該在可接受範圍
+                const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+
+                const snapshot = await getDocs(q);
+
+                if (snapshot.empty) return;
+
+                const progressMap = {};
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // 欄位名稱對應 admin.html 的邏輯
+                    const recordClass = data.classId || data.class || "";
+                    const recordName = data.studentName || data.name || "";
+
+                    // 前端篩選：如果這筆資料屬於當前登入者
+                    if (String(recordClass).trim() == String(targetClass).trim() &&
+                        String(recordName).trim() == String(targetName).trim()) {
+
+                        const aid = data.articleId;
+                        const score = data.score || 0;
+                        const time = data.timeTakenSeconds || 0;
+
+                        if (!progressMap[aid]) {
+                            progressMap[aid] = { maxScore: 0, totalTime: 0, attempts: 0 };
+                        }
+
+                        if (score > progressMap[aid].maxScore) {
+                            progressMap[aid].maxScore = score;
+                        }
+
+                        progressMap[aid].totalTime += time;
+                        progressMap[aid].attempts += 1;
+                    }
+                });
+
+                // 更新 UI
+                Object.keys(progressMap).forEach(articleId => {
+                    const statEl = document.getElementById(`user-stat-${articleId}`);
+                    if (statEl) {
+                        const data = progressMap[articleId];
+                        let icon = '📝';
+                        if (data.maxScore === 100) icon = '🏆';
+                        else if (data.maxScore >= 60) icon = '✅';
+
+                        let timeDisplay = `${data.totalTime}秒`;
+                        if (data.totalTime > 60) {
+                            const mins = Math.floor(data.totalTime / 60);
+                            const secs = data.totalTime % 60;
+                            timeDisplay = `${mins}分${secs}秒`;
+                        }
+
+                        statEl.innerHTML = `
+                            <div class="stat-badge score-text">${icon} ${data.maxScore}分</div>
+                            <div class="stat-badge count-text">(${data.attempts}次)</div>
+                            <div class="stat-badge time-text">⏱️ 累積 ${timeDisplay}</div>
+                        `;
+                    }
+                });
+
+            } catch (e) {
+                console.warn("Failed to load user progress:", e);
+            }
+        }
+
+        // 初始化流程
+        renderGrid();
+        checkUserGreeting();
+
+        signInAnonymously(auth).then(() => {
+            subscribeToStats();
+            loadUserProgress();
+        }).catch(e => {
+            console.error("Connection Error:", e);
+            document.getElementById('total-count').textContent = "連線中...";
+        });
+
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.5, random: true },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.3, width: 1 },
+                move: { enable: true, speed: 2, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: { repulse: { distance: 100, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+
+        // v1.8: Initialize completion filter on page load
+        window.addEventListener('DOMContentLoaded', async () => {
+            console.log('[Completion Filter] Page loaded, initializing...');
+            await checkUserGreeting();
+            renderGrid();
+            initializeFilterButtons();
+            await loadCompletedArticles();
+        });
+    </script>
+</body>
+
+</html>
