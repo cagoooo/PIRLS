@@ -4,24 +4,6 @@
 
 // Firebase Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, doc, addDoc, setDoc, getDocs, query, orderBy, serverTimestamp, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-// ==========================================================================
-// Firebase 設定
-// ==========================================================================
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-    apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
-    authDomain: "shimen-pirls.firebaseapp.com",
-    projectId: "shimen-pirls",
-    storageBucket: "shimen-pirls.firebasestorage.app",
-    messagingSenderId: "908294261992",
-    appId: "1:908294261992:web:948474ea7c2a662a778d5d"
-};
-
-const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls";
-
-// Init Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);

@@ -473,32 +473,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, onSnapshot, updateDoc, increment, setDoc, getDoc, query, where, getDocs, orderBy, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        // Firebase 設定
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
-            authDomain: "shimen-pirls.firebaseapp.com",
-            projectId: "shimen-pirls",
-            storageBucket: "shimen-pirls.firebasestorage.app",
-            messagingSenderId: "908294261992",
-            appId: "1:908294261992:web:948474ea7c2a662a778d5d"
-        };
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls";
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
 
         const COLLECTION_NAME = 'pirls_stats';
 
         // 文章資料 - 動態從 questions.json 載入
         let articles = [];
-        
+
         // 初始載入
-        (async function() {
+        (async function () {
             try {
                 const response = await fetch('/data/questions.json');
                 if (response.ok) {
@@ -510,11 +492,11 @@
                     }
                 } else {
                     console.warn('[動態載入] questions.json 載入失敗，使用降級資料');
-                    articles = Array.from({length: 47}, (_, i) => ({ id: i+1, title: `篇章 ${i+1}` }));
+                    articles = Array.from({ length: 47 }, (_, i) => ({ id: i + 1, title: `篇章 ${i + 1}` }));
                 }
             } catch (e) {
                 console.error('[動態載入] 錯誤:', e);
-                articles = Array.from({length: 47}, (_, i) => ({ id: i+1, title: `篇章 ${i+1}` }));
+                articles = Array.from({ length: 47 }, (_, i) => ({ id: i + 1, title: `篇章 ${i + 1}` }));
             }
         })();
 
@@ -532,7 +514,7 @@
 
             try {
                 currentUser = JSON.parse(storedUser);
-                
+
                 // 使用與 quiz.js loadHistory() 相同的路徑和邏輯
                 const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
                 const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
@@ -545,14 +527,14 @@
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    
+
                     const recordClass = data.classId || data.class || "";
                     const recordName = data.studentName || data.name || "";
 
                     // 比對班級和姓名
                     if (String(recordClass).trim() === String(targetClass).trim() &&
                         String(recordName).trim() === String(targetName).trim()) {
-                        
+
                         if (data.articleId) {
                             completedArticleIds.add(parseInt(data.articleId));
                         }
@@ -629,7 +611,7 @@
         // Initialize filter buttons
         function initializeFilterButtons() {
             document.querySelectorAll('.status-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function () {
                     applyFilter(this.dataset.filter);
                 });
             });
