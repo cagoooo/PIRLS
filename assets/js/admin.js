@@ -6,7 +6,27 @@
 // ==========================================================================
 // 設定
 // ==========================================================================
-const API_URL = 'http://127.0.0.1:3001';
+// API URL 會根據環境自動調整
+// 獲取基礎路徑（通用版本，支持任意子路徑部署）
+const getBasePath = () => {
+    const pathname = window.location.pathname;
+    
+    // 移除文件名，只保留目錄路徑
+    // 例如：/smes/PIRLS2/index.html → /smes/PIRLS2
+    //       /apps/reading/upload.html → /apps/reading
+    const lastSlashIndex = pathname.lastIndexOf('/');
+    const dir = pathname.substring(0, lastSlashIndex);
+    
+    // 如果是根目錄下的文件（如 /index.html），返回空字符串
+    if (!dir || dir === '') return '';
+    
+    return dir;
+};
+const BASE_PATH = getBasePath();
+
+const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+    ? 'http://127.0.0.1:3001' 
+    : `${window.location.origin}${BASE_PATH}`;
 
 // ==========================================================================
 // 全域變數
@@ -43,6 +63,10 @@ async function checkApiStatus() {
         if (response.ok) {
             apiAvailable = true;
             console.log('✅ API 伺服器已連線');
+        } else {
+            // API 端點存在但返回錯誤（如 404）
+            apiAvailable = false;
+            console.log('⚠️ API 端點不可用，將使用下載模式');
         }
     } catch (e) {
         apiAvailable = false;
@@ -67,7 +91,7 @@ async function loadExistingData() {
         }
 
         // 備用：直接讀取 JSON
-        const response = await fetch('data/questions.json?t=' + Date.now());
+        const response = await fetch(`${BASE_PATH}/data/questions.json?t=` + Date.now());
         if (response.ok) {
             existingQuestions = await response.json();
             nextAvailableId = Math.max(...existingQuestions.map(q => q.id), 0) + 1;
@@ -362,7 +386,7 @@ async function saveQuiz() {
     document.getElementById('result-id').textContent = articleId;
     document.getElementById('result-title').textContent = parsedData.title;
     document.getElementById('result-questions').textContent = parsedData.questions.length + ' 題';
-    document.getElementById('test-link').href = `quiz.html?id=${articleId}`;
+    document.getElementById('test-link').href = `${BASE_PATH}/quiz.html?id=${articleId}`;
 
     // 自動下載 JSON 檔案
     const downloadLink = document.createElement('a');

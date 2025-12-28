@@ -445,13 +445,13 @@
         <h3>📊 學習進度篩選：</h3>
         <div class="status-filters">
             <button class="status-btn active" data-filter="all">
-                📚 全部 (<span id="countAll">47</span>)
+                📚 全部 (<span id="countAll">--</span>)
             </button>
             <button class="status-btn" data-filter="completed">
                 ✅ 已完成 (<span id="countCompleted">0</span>)
             </button>
             <button class="status-btn" data-filter="uncompleted">
-                ⏳ 未完成 (<span id="countUncompleted">47</span>)
+                ⏳ 未完成 (<span id="countUncompleted">--</span>)
             </button>
         </div>
     </div>
@@ -473,8 +473,44 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
 
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, onSnapshot, updateDoc, increment, setDoc, getDoc, query, where, getDocs, orderBy, collectionGroup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // Firebase 設定
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "AIzaSyDpNO7HktKVmMRAEwiKlU1gJ6RTb9qaUm4",
+            authDomain: "shimen-pirls.firebaseapp.com",
+            projectId: "shimen-pirls",
+            storageBucket: "shimen-pirls.firebasestorage.app",
+            messagingSenderId: "908294261992",
+            appId: "1:908294261992:web:948474ea7c2a662a778d5d"
+        };
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : "shimen-pirls";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
 
         const COLLECTION_NAME = 'pirls_stats';
+
+        // 獲取基礎路徑（通用版本，支持任意子路徑部署）
+const getBasePath = () => {
+    const pathname = window.location.pathname;
+    
+    // 移除文件名，只保留目錄路徑
+    // 例如：/smes/PIRLS2/index.html → /smes/PIRLS2
+    //       /apps/reading/upload.html → /apps/reading
+    const lastSlashIndex = pathname.lastIndexOf('/');
+    const dir = pathname.substring(0, lastSlashIndex);
+    
+    // 如果是根目錄下的文件（如 /index.html），返回空字符串
+    if (!dir || dir === '') return '';
+    
+    return dir;
+};
+const BASE_PATH = getBasePath();
 
         // 文章資料 - 動態從 questions.json 載入
         let articles = [];
@@ -482,7 +518,7 @@
         // 初始載入
         (async function () {
             try {
-                const response = await fetch('/data/questions.json');
+                const response = await fetch(`${BASE_PATH}/data/questions.json`);
                 if (response.ok) {
                     const allQuestions = await response.json();
                     articles = allQuestions.map(q => ({ id: q.id, title: q.title }));
@@ -509,6 +545,15 @@
             const storedUser = localStorage.getItem('shimen_pirls_user');
             if (!storedUser) {
                 console.log('No user logged in, skipping completion check');
+                // 未登入時，更新篩選器計數器為實際文章數量
+                setTimeout(() => {
+                    const cards = document.querySelectorAll('.grid-item');
+                    const totalCount = cards.length;
+                    const countAll = document.getElementById('countAll');
+                    const countUncompleted = document.getElementById('countUncompleted');
+                    if (countAll) countAll.textContent = totalCount;
+                    if (countUncompleted) countUncompleted.textContent = totalCount;
+                }, 100);
                 return;
             }
 
@@ -1009,7 +1054,7 @@
             });
 
             setTimeout(() => {
-                window.location.href = `quiz.html?id=${id}`;
+                window.location.href = `${BASE_PATH}/quiz.html?id=${id}`;
             }, 200);
         }
 

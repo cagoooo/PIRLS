@@ -109,7 +109,19 @@ async function ensureAuthenticated() {
     const isValid = await verifyToken();
 
     if (!isValid) {
+        // Token 无效，显示登录对话框
         await showLoginModal();
+    } else {
+        // Token 有效，隐藏登录对话框并定义占位函数
+        const modal = document.getElementById('passwordModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+
+        // 定义占位函数以防 HTML 按钮被点击
+        window.checkAdminPassword = function () {
+            console.log('[Auth] 已登录，无需重新验证');
+        };
     }
 }
 

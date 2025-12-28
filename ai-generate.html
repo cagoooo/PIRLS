@@ -603,6 +603,31 @@
     </div>
 
     <script>
+        // 動態檢測 API 基礎 URL
+        const getAPIBaseURL = () => {
+            if (window.location.protocol === 'file:') {
+                return 'http://127.0.0.1:3001';
+            }
+
+            // 如果是本地開發環境
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return `${window.location.protocol}//${window.location.host}`;
+            }
+
+            // 生產環境：檢測是否在子路徑下
+            const pathname = window.location.pathname;
+            const pathParts = pathname.split('/').filter(p => p);
+
+            // 如果路徑包含 PIRLS2，則 API 在同一個子路徑下
+            if (pathParts.includes('PIRLS2')) {
+                const basePath = '/' + pathParts.slice(0, pathParts.indexOf('PIRLS2') + 1).join('/');
+                return `${window.location.origin}${basePath}`;
+            }
+
+            return window.location.origin;
+        };
+        const API_BASE_URL = getAPIBaseURL();
+
         let currentQuizData = null;
         let progressInterval = null;
 
@@ -621,7 +646,7 @@
             simulateProgress();
 
             try {
-                const response = await authenticatedFetch('http://127.0.0.1:3001/api/generate-quiz', {
+                const response = await authenticatedFetch(`${API_BASE_URL}/api/generate-quiz`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ topic, difficulty, wordCount, questionCount })
@@ -760,11 +785,11 @@
             saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 儲存中...';
 
             try {
-                const infoResponse = await fetch('http://127.0.0.1:3001/api/questions');
+                const infoResponse = await fetch(`${API_BASE_URL}/api/questions`);
                 const info = await infoResponse.json();
                 const nextId = info.nextId;
 
-                const saveResponse = await authenticatedFetch('http://127.0.0.1:3001/api/save-quiz', {
+                const saveResponse = await authenticatedFetch(`${API_BASE_URL}/api/save-quiz`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ quizData: editedData, articleId: nextId })
