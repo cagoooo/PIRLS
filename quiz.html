@@ -63,7 +63,7 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container desktop-only">
         <!-- 左側欄 -->
         <div id="left-column" class="column">
             <h2>使用指南</h2>
@@ -74,9 +74,11 @@
                 <div style="font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px;">目前使用者</div>
                 <div id="desktop-user-name" style="font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">未登入</div>
                 <button onclick="resetUser()"
-                    style="background: transparent; border: 1px solid white; color: white; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; width: 100%;">🔄 切換使用者</button>
+                    style="background: transparent; border: 1px solid white; color: white; padding: 4px 10px; font-size: 0.8rem; cursor: pointer; border-radius: 4px; width: 100%;">🔄
+                    切換使用者</button>
                 <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">
-                    <a href="index.html" class="btn-home-link" style="color: white; text-decoration: none; display: block;">← 🏠 返回文章列表</a>
+                    <a href="index.html" class="btn-home-link"
+                        style="color: white; text-decoration: none; display: block;">← 🏠 返回文章列表</a>
                 </div>
             </div>
 
@@ -119,16 +121,16 @@
         <div id="right-column" class="column">
             <h2>閱讀理解問題</h2>
 
-        <!-- 答題進度指示器 (v1.7 新增) -->
-        <div class="progress-container">
-            <div class="progress-header">
-                <span class="progress-text" id="progressText">0/0 題已作答</span>
-                <span class="progress-percent" id="progressPercent">0%</span>
+            <!-- 答題進度指示器 (v1.7 新增) -->
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-text" id="progressText">0/0 題已作答</span>
+                    <span class="progress-percent" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
             </div>
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill" id="progressFill"></div>
-            </div>
-        </div>
 
             <div id="questions-container">
                 <!-- 骨架屏載入動畫 (v1.7) -->
@@ -153,6 +155,8 @@
         </div>
     </div>
 
+    <!-- 手機版 Tab 功能 -->
+    <script src="assets/js/mobile-tabs.js"></script>
     <script type="module" src="assets/js/quiz.js"></script>
 </body>
 

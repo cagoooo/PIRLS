@@ -1,11 +1,11 @@
 ﻿/* ==========================================================================
-   PIRLS é±è®çè§£æ¸¬é© - å±ç¨æ¨£å¼
+   PIRLS Ã©ÂÂ±Ã¨Â®ÂÃ§ÂÂÃ¨Â§Â£Ã¦Â¸Â¬Ã©Â©Â - Ã¥ÂÂ±Ã§ÂÂ¨Ã¦Â¨Â£Ã¥Â¼Â
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
 
 /* --------------------------------------------------------------------------
-   CSS è®æ¸å®ç¾©
+   CSS Ã¨Â®ÂÃ¦ÂÂ¸Ã¥Â®ÂÃ§Â¾Â©
    -------------------------------------------------------------------------- */
 :root {
     --primary-color: #4169e1;
@@ -16,7 +16,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   åºç¤æ¨£å¼
+   Ã¥ÂÂºÃ§Â¤ÂÃ¦Â¨Â£Ã¥Â¼Â
    -------------------------------------------------------------------------- */
 * {
     box-sizing: border-box;
@@ -32,7 +32,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   ä¸æ¬å¼ä½å± (æ¡é¢ç)
+   Ã¤Â¸ÂÃ¦Â¬ÂÃ¥Â¼ÂÃ¤Â½ÂÃ¥Â±Â (Ã¦Â¡ÂÃ©ÂÂ¢Ã§ÂÂ)
    -------------------------------------------------------------------------- */
 .container {
     display: flex;
@@ -47,14 +47,14 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-/* å·¦å´æ¬ */
+/* Ã¥Â·Â¦Ã¥ÂÂ´Ã¦Â¬Â */
 #left-column {
     width: 20%;
     background-color: var(--secondary-color);
     color: white;
 }
 
-/* ä¸­éæ¬ */
+/* Ã¤Â¸Â­Ã©ÂÂÃ¦Â¬Â */
 #center-column {
     width: 50%;
     background-color: white;
@@ -65,7 +65,7 @@ body {
     text-align: justify;
 }
 
-/* å³å´æ¬ */
+/* Ã¥ÂÂ³Ã¥ÂÂ´Ã¦Â¬Â */
 #right-column {
     width: 30%;
     background-color: #fffbe6;
@@ -73,7 +73,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   æ¨é¡æ¨£å¼
+   Ã¦Â¨ÂÃ©Â¡ÂÃ¦Â¨Â£Ã¥Â¼Â
    -------------------------------------------------------------------------- */
 h1 {
     font-size: 1.8rem;
@@ -92,7 +92,7 @@ h2 {
 }
 
 /* --------------------------------------------------------------------------
-   å·¦å´æ¬ - ä½¿ç¨æå
+   Ã¥Â·Â¦Ã¥ÂÂ´Ã¦Â¬Â - Ã¤Â½Â¿Ã§ÂÂ¨Ã¦ÂÂÃ¥ÂÂ
    -------------------------------------------------------------------------- */
 .step {
     margin-bottom: 15px;
@@ -102,7 +102,7 @@ h2 {
 }
 
 /* --------------------------------------------------------------------------
-   å³å´æ¬ - åç­å
+   Ã¥ÂÂ³Ã¥ÂÂ´Ã¦Â¬Â - Ã¥ÂÂÃ§Â­ÂÃ¥ÂÂ
    -------------------------------------------------------------------------- */
 .question {
     margin-bottom: 20px;
@@ -146,7 +146,7 @@ h2 {
 }
 
 /* --------------------------------------------------------------------------
-   æäº¤æé
+   Ã¦ÂÂÃ¤ÂºÂ¤Ã¦ÂÂÃ©ÂÂ
    -------------------------------------------------------------------------- */
 button.submit-btn {
     background-color: var(--primary-color);
@@ -172,7 +172,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   é é¨ä½¿ç¨èè³è¨å (ææ©ç)
+   Ã©Â ÂÃ©ÂÂ¨Ã¤Â½Â¿Ã§ÂÂ¨Ã¨ÂÂÃ¨Â³ÂÃ¨Â¨ÂÃ¥ÂÂ (Ã¦ÂÂÃ¦Â©ÂÃ§ÂÂ)
    -------------------------------------------------------------------------- */
 #user-info-bar {
     display: none;
@@ -190,7 +190,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   ç»å¥ Modal
+   Ã§ÂÂ»Ã¥ÂÂ¥ Modal
    -------------------------------------------------------------------------- */
 .modal-overlay {
     position: fixed;
@@ -254,7 +254,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   RWD ææ©çèª¿æ´
+   RWD Ã¦ÂÂÃ¦Â©ÂÃ§ÂÂÃ¨ÂªÂ¿Ã¦ÂÂ´
    -------------------------------------------------------------------------- */
 @media screen and (max-width: 900px) {
     .container {
@@ -324,7 +324,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   çµæåé¥
+   Ã§ÂµÂÃ¦ÂÂÃ¥ÂÂÃ©Â¥Â
    -------------------------------------------------------------------------- */
 .explanation {
     margin-top: 10px;
@@ -359,7 +359,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   æ­·å²ç´é
+   Ã¦Â­Â·Ã¥ÂÂ²Ã§Â´ÂÃ©ÂÂ
    -------------------------------------------------------------------------- */
 #history-section {
     margin-top: 30px;
@@ -389,7 +389,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   åç«
+   Ã¥ÂÂÃ§ÂÂ«
    -------------------------------------------------------------------------- */
 @keyframes fadeIn {
     from {
@@ -404,7 +404,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   æ¬æ¬¡æç¸¾é¡¯ç¤ºå
+   Ã¦ÂÂ¬Ã¦Â¬Â¡Ã¦ÂÂÃ§Â¸Â¾Ã©Â¡Â¯Ã§Â¤ÂºÃ¥ÂÂ
    -------------------------------------------------------------------------- */
 #current-stats {
     background-color: #f0f8ff;
@@ -415,7 +415,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   æ¡æ©çä½¿ç¨èè³è¨
+   Ã¦Â¡ÂÃ¦Â©ÂÃ§ÂÂÃ¤Â½Â¿Ã§ÂÂ¨Ã¨ÂÂÃ¨Â³ÂÃ¨Â¨Â
    -------------------------------------------------------------------------- */
 #desktop-user-info {
     margin-bottom: 20px;
@@ -425,7 +425,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   è¼å¥ä¸­æç¤º
+   Ã¨Â¼ÂÃ¥ÂÂ¥Ã¤Â¸Â­Ã¦ÂÂÃ§Â¤Âº
    -------------------------------------------------------------------------- */
 .loading-spinner {
     text-align: center;
@@ -453,7 +453,7 @@ button.submit-btn:disabled {
 }
 
 /* --------------------------------------------------------------------------
-   é¯èª¤æç¤º
+   Ã©ÂÂ¯Ã¨ÂªÂ¤Ã¦ÂÂÃ§Â¤Âº
    -------------------------------------------------------------------------- */
 .error-message {
     text-align: center;
@@ -470,7 +470,7 @@ button.submit-btn:disabled {
     text-decoration: underline;
 }
 
-/* ========== Àu¤Æ«áªº°Ê§@«ö¶s¼Ë¦¡ ========== */
+/* ========== ÃuÂ¤ÃÂ«Ã¡ÂªÂºÂ°ÃÂ§@Â«Ã¶Â¶sÂ¼ÃÂ¦Â¡ ========== */
 #desktop-user-info button,
 #desktop-user-info a {
     display: flex;
@@ -528,26 +528,6 @@ button.submit-btn:disabled {
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(65, 105, 225, 0.4);
 }
-
-/* Mobile切換按鈕樣式 */
-.btn-mobile-switch {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
-    border: 1px solid #dee2e6;
-    color: #495057;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-}
-
-.btn-mobile-switch:active {
-    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-    transform: scale(0.96);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
 
 /* 手機版頂部優化樣式 */
 .user-info-left {
@@ -1165,289 +1145,4 @@ button.submit-btn:disabled {
         font-size: 0.7rem;
         padding: 3px 10px;
     }
-}
-/* ==========================================================================
-   手機版 Tab 切換介面樣式
-   ========================================================================== */
-
-/* 手機版 Tab 導航 */
-.mobile-tab-nav {
-    display: none; /* 預設隱藏，手機版顯示 */
-    position: sticky;
-    top: 50px; /* 在 user-info-bar 下方 */
-    background: white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 100;
-}
-
-.mobile-tab-nav .tab-btn {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 8px;
-    border: none;
-    background: transparent;
-    color: #666;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-}
-
-.mobile-tab-nav .tab-btn.active {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.mobile-tab-nav .tab-btn.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--primary-color);
-    border-radius: 3px 3px 0 0;
-}
-
-.tab-icon {
-    font-size: 1.5rem;
-}
-
-.tab-badge {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--secondary-color);
-    color: white;
-    font-size: 0.65rem;
-    padding: 2px 6px;
-    border-radius: 10px;
-    font-weight: 600;
-}
-
-/* 手機版 Tab 內容區 */
-.mobile-tab-container {
-    display: none; /* 預設隱藏，手機版顯示 */
-    position: relative;
-    height: calc(100vh - 150px);
-    overflow: hidden;
-}
-
-.tab-pane {
-    display: none;
-    padding: 20px;
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.tab-pane.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 滑動提示 */
-.swipe-hint {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.8);
-    color: white;
-    padding: 12px 20px;
-    border-radius: 25px;
-    font-size: 0.85rem;
-    z-index: 1000;
-    animation: slideUp 0.5s ease, fadeOut 0.5s ease 3s;
-    animation-fill-mode: forwards;
-}
-
-@keyframes slideUp {
-    from {
-        bottom: -50px;
-        opacity: 0;
-    }
-    to {
-        bottom: 20px;
-        opacity: 1;
-    }
-}
-
-@keyframes fadeOut {
-    to {
-        opacity: 0;
-        bottom: -50px;
-    }
-}
-
-/* ==========================================================================
-   響應式設計 - 手機版
-   ========================================================================== */
-
-@media screen and (max-width: 900px) {
-    /* 顯示手機版 Tab 介面 */
-    .mobile-tab-nav {
-        display: flex;
-    }
-    
-    .mobile-tab-container {
-        display: block;
-    }
-    
-    /* 隱藏桌面版三欄式佈局 */
-    .container.desktop-only {
-        display: none !important;
-    }
-    
-    /* 固定頂部資訊列 */
-    #user-info-bar {
-        position: sticky;
-        top: 0;
-        z-index: 101;
-    }
-}
-
-@media screen and (min-width: 901px) {
-    /* 桌面版：隱藏 Tab，顯示三欄 */
-    .mobile-tab-nav,
-    .mobile-tab-container {
-        display: none !important;
-    }
-    
-    .container.desktop-only {
-        display: flex !important;
-    }
-}
-
-/* ==========================================================================
-   手機版 Tab - 選項和按鈕優化
-   ========================================================================== */
-
-/* 手機版選項選中狀態增強 */
-.mobile-tab-container .option input[type="radio"]:checked + span,
-.mobile-tab-container .option:has(input[type="radio"]:checked) {
-    background-color: #e3f2fd;
-    border-color: var(--primary-color);
-    font-weight: 600;
-}
-
-.mobile-tab-container .option input[type="radio"]:checked {
-    accent-color: var(--primary-color);
-}
-
-/* 手機版提交按鈕優化 */
-.mobile-tab-container .submit-button {
-    position: sticky;
-    bottom: 20px;
-    left: 0;
-    right: 0;
-    margin: 20px auto 0;
-    width: calc(100% - 40px);
-    max-width: 400px;
-    padding: 16px 24px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: white;
-    background: linear-gradient(135deg, var(--primary-color), #5a7fe1);
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(65, 105, 225, 0.3);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.mobile-tab-container .submit-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(65, 105, 225, 0.4);
-}
-
-.mobile-tab-container .submit-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(65, 105, 225, 0.3);
-}
-
-/* 提交按鈕禁用狀態 */
-.mobile-tab-container .submit-button:disabled {
-    background: linear-gradient(135deg, #9e9e9e, #757575);
-    box-shadow: none;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-/* 提交按鈕動畫效果 */
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.02);
-    }
-}
-
-.mobile-tab-container .submit-button.ready {
-    animation: pulse 2s infinite;
-}
-
-/* 手機版選項選中狀態 - 使用 class 而非 :has() 以確保兼容性 */
-.mobile-tab-container .option.selected {
-    background-color: #e3f2fd !important;
-    border-color: var(--primary-color) !important;
-    font-weight: 600 !important;
-}
-
-.mobile-tab-container .option.selected input[type="radio"] {
-    accent-color: var(--primary-color);
-}
-
-/* 手機版 Radio Button 填充樣式 */
-.mobile-tab-container .option input[type="radio"]:checked {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--primary-color);
-    border-radius: 50%;
-    background-color: white;
-    position: relative;
-    cursor: pointer;
-}
-
-.mobile-tab-container .option input[type="radio"]:checked::before {
-    content: '';
-    display: block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.mobile-tab-container .option input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid #ccc;
-    border-radius: 50%;
-    background-color: white;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }

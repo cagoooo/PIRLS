@@ -453,3 +453,66 @@ function resetUpload() {
 // å°‡å‡½å¼æš´éœ²åˆ°å…¨åŸŸ
 window.resetUpload = resetUpload;
 window.saveQuiz = saveQuiz;
+
+// ==========================================================================
+// ¦Û°Ê¦P¨B¨ì VM
+// ==========================================================================
+async function syncToVM() {
+    const VM_URL = localStorage.getItem('vmUrl') || 'https://read.smes.tyc.edu.tw/smes/PIRLS';
+    const autoSyncEnabled = localStorage.getItem('autoSync') !== 'false';
+    
+    if (!autoSyncEnabled) {
+        console.log('?? ¦Û°Ê¦P¨B¤w°±¥Î');
+        return;
+    }
+    
+    try {
+        showSyncStatus('¥¿¦b¦P¨B¨ì½u¤Wºô¯¸...');
+        
+        const response = await fetch(`/data/questions.json?t=` + Date.now());
+        if (!response.ok) throw new Error('µLªkÅª¨ú questions.json');
+        
+        const questions = await response.json();
+        const token = localStorage.getItem('adminToken');
+        if (!token) throw new Error('¥¼µn¤JºÞ²z­û');
+        
+        const syncResponse = await fetch(`/api/sync-from-local`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token
+            },
+            body: JSON.stringify({ questions })
+        });
+        
+        const result = await syncResponse.json();
+        
+        if (result.success) {
+            showSyncStatus(`? ¤w¦Û°Ê¦P¨B  ­ÓÃD²Õ¨ì½u¤Wºô¯¸`, 'success');
+            console.log(`[Sync] ¦P¨B¦¨¥\:  ­ÓÃD²Õ`);
+        } else {
+            throw new Error(result.error);
+        }
+        
+    } catch (e) {
+        console.error('[Sync] ¦P¨B¥¢±Ñ:', e);
+        showSyncStatus('?? ¦Û°Ê¦P¨B¥¢±Ñ¡G' + e.message, 'warning');
+    }
+}
+
+function showSyncStatus(message, type = 'info') {
+    let statusEl = document.getElementById('sync-status');
+    if (!statusEl) {
+        statusEl = document.createElement('div');
+        statusEl.id = 'sync-status';
+        statusEl.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#333;color:white;padding:15px 20px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;font-size:14px;max-width:300px';
+        document.body.appendChild(statusEl);
+    }
+    if (type === 'success') statusEl.style.background = '#00a86b';
+    else if (type === 'warning') statusEl.style.background = '#ff9800';
+    else statusEl.style.background = '#333';
+    
+    statusEl.textContent = message;
+    statusEl.style.display = 'block';
+    if (type !== 'info') setTimeout(() => statusEl.style.display = 'none', 3000);
+}
