@@ -382,32 +382,50 @@ class ProgressDashboard {
 
     calculateStats() {
         if (!this.data || Object.keys(this.data).length === 0) {
+            // 動態獲取文章總數
+            const gridItems = document.querySelectorAll('.grid-item');
+            const total = gridItems.length || 53;
+
             return {
                 completed: 0,
-                uncompleted: 53,
-                total: 53,
+                uncompleted: total,
+                total: total,
                 avgScore: 0,
                 maxScore: 0,
                 totalTime: '0分'
             };
         }
 
-        const completed = Object.keys(this.data).length;
-        const total = 53;
-        const uncompleted = total - completed;
-
+        // v2.2.2: 分別計算「已完成」(100分) 和「已作答」(所有分數)
+        let completed = 0;  // 只計算100分，用於「已完成」卡片
+        let attempted = 0;   // 所有作答文章數，用於平均分計算
         let totalScore = 0;
         let maxScore = 0;
         let totalSeconds = 0;
 
         Object.values(this.data).forEach(article => {
-            totalScore += article.maxScore || 0;
-            maxScore = Math.max(maxScore, article.maxScore || 0);
+            const score = article.maxScore || 0;
+
+            // 只有100分才算「已完成」
+            if (score === 100) {
+                completed++;
+            }
+
+            // 所有作答都計入
+            attempted++;
+            totalScore += score;
+            maxScore = Math.max(maxScore, score);
             totalSeconds += article.totalTime || 0;
         });
 
-        const avgScore = completed > 0 ? Math.round(totalScore / completed) : 0;
+        // 平均分使用所有作答文章計算（更合理）
+        const avgScore = attempted > 0 ? Math.round(totalScore / attempted) : 0;
         const totalTime = this.formatTime(totalSeconds);
+
+        // 動態獲取文章總數
+        const gridItems = document.querySelectorAll('.grid-item');
+        const total = gridItems.length || 53;
+        const uncompleted = total - completed;
 
         return {
             completed,
