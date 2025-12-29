@@ -26,15 +26,19 @@ class ProgressDashboard {
             return;
         }
 
+        // 讀取儲存的展開/收合狀態
+        const isCollapsed = localStorage.getItem('dashboard_collapsed') === 'true';
+        const icon = isCollapsed ? '📈' : '📉';
+
         this.container.innerHTML = `
             <div class="dashboard-header">
                 <h3>📊 我的學習進度</h3>
-                <button class="dashboard-toggle" onclick="window.progressDashboard.toggle()">
-                    <span class="icon">📉</span>
+                <button class="dashboard-toggle" onclick="window.progressDashboard.toggle()" aria-label="展開收合儀表板">
+                    <span class="icon">${icon}</span>
                 </button>
             </div>
             
-            <div class="dashboard-content">
+            <div class="dashboard-content ${isCollapsed ? 'collapsed' : ''}">
                 <div class="dashboard-grid">
                     <!-- 統計卡片 -->
                     <div class="stats-cards">
@@ -43,7 +47,7 @@ class ProgressDashboard {
                     
                     <!-- 進度環形圖 -->
                     <div class="chart-card">
-                        <h4>完成進度</h4>
+                        <h4>完成進度 <small style="color: #999; font-weight: normal;">(點擊查看)</small></h4>
                         <div class="chart-wrapper">
                             <canvas id="progressChart"></canvas>
                             <div class="chart-center-text">
@@ -55,7 +59,7 @@ class ProgressDashboard {
                     
                     <!-- 成績趨勢圖 -->
                     <div class="chart-card chart-wide">
-                        <h4>成績趨勢</h4>
+                        <h4>成績趨勢 <small style="color: #999; font-weight: normal;">(點擊跳轉)</small></h4>
                         <canvas id="scoreChart"></canvas>
                     </div>
                 </div>
@@ -157,7 +161,7 @@ class ProgressDashboard {
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
-                cutout: '80%',  // 增加到 80% 讓中間空間更大
+                cutout: '80%',
                 plugins: {
                     legend: {
                         display: false
@@ -169,6 +173,64 @@ class ProgressDashboard {
                                 const value = context.parsed || 0;
                                 const percentage = ((value / stats.total) * 100).toFixed(1);
                                 return `${label}: ${value} 篇 (${percentage}%)`;
+                            }
+                        }
+                    }
+                },
+                // 添加點擊事件
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        // 0 = 已完成, 1 = 未完成
+                        if (index === 0 && stats.completed > 0) {
+                            // 跳轉到已完成篩選
+                            const filterBtn = document.querySelector('[data-filter="completed"]');
+                            if (filterBtn) {
+                                filterBtn.click();
+
+                                // 滾動到文章網格區域（平滑動畫）
+                                setTimeout(() => {
+                                    const grid = document.getElementById('article-grid');
+                                    if (grid) {
+                                        const gridTop = grid.getBoundingClientRect().top + window.pageYOffset - 100;
+                                        window.scrollTo({
+                                            top: gridTop,
+                                            behavior: 'smooth'
+                                        });
+
+                                        // 添加閃爍效果提示用戶
+                                        grid.style.transition = 'background-color 0.3s';
+                                        grid.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+                                        setTimeout(() => {
+                                            grid.style.backgroundColor = '';
+                                        }, 600);
+                                    }
+                                }, 100);
+                            }
+                        } else if (index === 1 && stats.uncompleted > 0) {
+                            // 跳轉到未完成篩選
+                            const filterBtn = document.querySelector('[data-filter="uncompleted"]');
+                            if (filterBtn) {
+                                filterBtn.click();
+
+                                // 滾動到文章網格區域（平滑動畫）
+                                setTimeout(() => {
+                                    const grid = document.getElementById('article-grid');
+                                    if (grid) {
+                                        const gridTop = grid.getBoundingClientRect().top + window.pageYOffset - 100;
+                                        window.scrollTo({
+                                            top: gridTop,
+                                            behavior: 'smooth'
+                                        });
+
+                                        // 添加閃爍效果提示用戶
+                                        grid.style.transition = 'background-color 0.3s';
+                                        grid.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
+                                        setTimeout(() => {
+                                            grid.style.backgroundColor = '';
+                                        }, 600);
+                                    }
+                                }, 100);
                             }
                         }
                     }
@@ -200,13 +262,14 @@ class ProgressDashboard {
                     borderWidth: 3,
                     tension: 0.4,
                     fill: true,
-                    pointRadius: 5,
+                    pointRadius: 6,  // 增大顯示半徑
                     pointBackgroundColor: '#2196F3',
                     pointBorderColor: '#fff',
                     pointBorderWidth: 2,
-                    pointHoverRadius: 7,
+                    pointHoverRadius: 10,  // 增大hover半徑
                     pointHoverBackgroundColor: '#1976D2',
-                    pointHoverBorderWidth: 3
+                    pointHoverBorderWidth: 3,
+                    pointHitRadius: 20  // 關鍵：增大點擊檢測半徑到20px
                 }]
             },
             options: {
@@ -226,6 +289,11 @@ class ProgressDashboard {
                         },
                         bodyFont: {
                             size: 13
+                        },
+                        callbacks: {
+                            afterLabel: (context) => {
+                                return '點擊查看文章';
+                            }
                         }
                     }
                 },
@@ -251,6 +319,60 @@ class ProgressDashboard {
                         },
                         grid: {
                             display: false
+                        }
+                    }
+                },
+                // 添加點擊事件
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const articleId = scoreData.articleIds[index];
+                        if (articleId) {
+                            // 先切換到「全部」篩選，確保文章可見
+                            const allFilterBtn = document.querySelector('[data-filter="all"]');
+                            if (allFilterBtn && !allFilterBtn.classList.contains('active')) {
+                                allFilterBtn.click();
+                            }
+
+                            // 稍微延遲以確保篩選完成
+                            setTimeout(() => {
+                                // 找到對應的文章卡片
+                                const articleCard = document.querySelector(`[data-article-id="${articleId}"]`);
+
+                                if (articleCard) {
+                                    // 滾動到文章卡片位置
+                                    const cardTop = articleCard.getBoundingClientRect().top + window.pageYOffset - 150;
+                                    window.scrollTo({
+                                        top: cardTop,
+                                        behavior: 'smooth'
+                                    });
+
+                                    // 添加高亮動畫效果
+                                    articleCard.style.transition = 'all 0.4s ease';
+                                    articleCard.style.transform = 'scale(1.05)';
+                                    articleCard.style.boxShadow = '0 8px 24px rgba(33, 150, 243, 0.4)';
+                                    articleCard.style.border = '3px solid #2196F3';
+
+                                    // 3秒後恢復
+                                    setTimeout(() => {
+                                        articleCard.style.transform = '';
+                                        articleCard.style.boxShadow = '';
+                                        articleCard.style.border = '';
+                                    }, 3000);
+
+                                    // 顯示提示
+                                    if (window.errorHandler) {
+                                        errorHandler.info(
+                                            `已定位到篇章 ${articleId}`,
+                                            '點擊卡片即可開始測驗',
+                                            3000
+                                        );
+                                    }
+                                } else {
+                                    // 如果找不到卡片（比如篩選隱藏了），則跳轉到測驗頁面
+                                    window.location.href = `quiz.html?id=${articleId}`;
+                                }
+                            }, 300);
                         }
                     }
                 }
@@ -304,7 +426,7 @@ class ProgressDashboard {
 
     getScoreHistory() {
         if (!this.data || Object.keys(this.data).length === 0) {
-            return { labels: [], scores: [] };
+            return { labels: [], scores: [], articleIds: [] };
         }
 
         // 取得最近10篇已完成的文章
@@ -318,7 +440,8 @@ class ProgressDashboard {
 
         return {
             labels: entries.map(e => `篇章 ${e.id}`),
-            scores: entries.map(e => e.score)
+            scores: entries.map(e => e.score),
+            articleIds: entries.map(e => e.id) // 添加文章 ID 用於點擊跳轉
         };
     }
 
@@ -339,8 +462,12 @@ class ProgressDashboard {
         const icon = this.container.querySelector('.dashboard-toggle .icon');
 
         if (content && icon) {
-            content.classList.toggle('collapsed');
-            icon.textContent = content.classList.contains('collapsed') ? '📈' : '📉';
+            const isCollapsed = content.classList.toggle('collapsed');
+            icon.textContent = isCollapsed ? '📈' : '📉';
+
+            // 儲存狀態到 localStorage
+            localStorage.setItem('dashboard_collapsed', isCollapsed);
+            console.log('[ProgressDashboard] State saved:', isCollapsed ? 'collapsed' : 'expanded');
         }
     }
 
