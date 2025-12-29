@@ -1,4 +1,16 @@
 {
+  "name": "pirls-reading-platform",
+  "version": "2.2.0",
+  "description": "PIRLS 閱讀理解測驗平台",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "build:legacy": "vite build --mode production",
+    "analyze": "vite-bundle-visualizer",
+    "clean": "node cleanup-temp-files.ps1"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -9,8 +21,14 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@vitejs/plugin-legacy": "^5.0.0",
+    "autoprefixer": "^10.4.16",
     "cssnano": "^7.1.2",
+    "postcss": "^8.4.32",
     "postcss-cli": "^11.0.1",
-    "terser": "^5.44.1"
+    "terser": "^5.44.1",
+    "vite": "^5.0.10",
+    "vite-bundle-visualizer": "^1.0.0",
+    "vite-plugin-compression": "^0.5.1"
   }
 }
