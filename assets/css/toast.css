@@ -1,0 +1,210 @@
+/**
+ * PIRLS Toast 通知系統樣式
+ * @version 1.0
+ * @date 2025-12-29
+ */
+
+/* Toast 容器 */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+/* Toast 基礎樣式 */
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 500px;
+    padding: 16px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: auto;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(400px);
+}
+
+/* Toast 類型樣式 */
+.toast-success {
+    border-left: 4px solid #4CAF50;
+}
+
+.toast-error {
+    border-left: 4px solid #F44336;
+}
+
+.toast-warning {
+    border-left: 4px solid #FF9800;
+}
+
+.toast-info {
+    border-left: 4px solid #2196F3;
+}
+
+/* Toast 圖標 */
+.toast-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+/* Toast 內容 */
+.toast-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.toast-message {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+    word-wrap: break-word;
+}
+
+.toast-detail {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.4;
+    word-wrap: break-word;
+}
+
+/* 關閉按鈕 */
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    background: #f0f0f0;
+    color: #333;
+}
+
+/* 載入覆蓋層 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.loading-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 載入動畫 */
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-message {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 手機版適配 */
+@media (max-width: 768px) {
+    .toast-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+    }
+
+    .toast {
+        min-width: auto;
+        max-width: none;
+    }
+
+    .toast-message {
+        font-size: 14px;
+    }
+
+    .toast-detail {
+        font-size: 12px;
+    }
+}
+
+/* 深色模式支援（可選） */
+@media (prefers-color-scheme: dark) {
+    .toast {
+        background: #2d2d2d;
+    }
+
+    .toast-message {
+        color: #e0e0e0;
+    }
+
+    .toast-detail {
+        color: #b0b0b0;
+    }
+
+    .toast-close {
+        color: #888;
+    }
+
+    .toast-close:hover {
+        background: #404040;
+        color: #fff;
+    }
+}

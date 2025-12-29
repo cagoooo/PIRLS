@@ -414,6 +414,12 @@
             }
         }
     </style>
+    <!-- Toast 通知系統樣式 -->
+    <link rel="stylesheet" href="assets/css/toast.css">
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 
 <body>
@@ -439,6 +445,11 @@
         </div>
     </div>
 
+
+    
+
+    <!-- 學習進度儀表板 -->
+    <div id="progressDashboard" class="progress-dashboard" style="display: none;"></div>
 
     <!-- v1.8: Completion Status Filter -->
     <div class="filter-status-container">
@@ -1212,6 +1223,87 @@ const BASE_PATH = getBasePath();
             retina_detect: true
         });
 
+        
+        // v2.2: Initialize Progress Dashboard
+        async function initProgressDashboard() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            if (!storedUser) {
+                console.log('[ProgressDashboard] No user logged in');
+                return;
+            }
+            
+            // 顯示儀表板
+            const dashboardEl = document.getElementById('progressDashboard');
+            if (dashboardEl) {
+                dashboardEl.style.display = 'block';
+            }
+            
+            // 創建實例
+            window.progressDashboard = new ProgressDashboard('progressDashboard');
+            
+            // 獲取進度數據（使用現有的 loadUserProgress 邏輯獲取的數據）
+            // 我們需要將 loadUserProgress 改為返回數據
+            const progressData = await getProgressDataForDashboard();
+            
+            // 初始化
+            await progressDashboard.init(progressData);
+            
+            console.log('[ProgressDashboard] Initialized successfully');
+        }
+        
+        // 獲取進度數據用於儀表板
+        async function getProgressDataForDashboard() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            if (!storedUser) return {};
+            
+            const userInfo = JSON.parse(storedUser);
+            const targetClass = userInfo.class;
+            const targetName = userInfo.name;
+            
+            if (!targetClass || !targetName) return {};
+            
+            try {
+                const publicResultsRef = collection(db, 'artifacts', appId, 'public', 'data', 'quiz_results');
+                const q = query(publicResultsRef, orderBy('timestamp', 'desc'));
+                const snapshot = await getDocs(q);
+                
+                if (snapshot.empty) return {};
+                
+                const progressMap = {};
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const recordClass = data.classId || data.class || "";
+                    const recordName = data.studentName || data.name || "";
+                    
+                    if (String(recordClass).trim() === String(targetClass).trim() && 
+                        String(recordName).trim() === String(targetName).trim()) {
+                        
+                        const aid = data.articleId;
+                        const score = data.score || 0;
+                        const time = data.timeTakenSeconds || 0;
+                        
+                        if (!progressMap[aid]) {
+                            progressMap[aid] = { maxScore: 0, totalTime: 0, attempts: 0 };
+                        }
+                        
+                        if (score > progressMap[aid].maxScore) {
+                            progressMap[aid].maxScore = score;
+                        }
+                        
+                        progressMap[aid].totalTime += time;
+                        progressMap[aid].attempts += 1;
+                    }
+                });
+                
+                return progressMap;
+            } catch (e) {
+                console.error('[ProgressDashboard] Failed to load progress data:', e);
+                return {};
+            }
+        }
+
+
         // v1.8: Initialize completion filter on page load
         window.addEventListener('DOMContentLoaded', async () => {
             console.log('[Completion Filter] Page loaded, initializing...');
@@ -1221,8 +1313,15 @@ const BASE_PATH = getBasePath();
             await loadCompletedArticles();
             // v2.1: Auto-filter uncompleted articles for logged-in users
             autoFilterUncompletedForLoggedInUser();
+            // v2.2: Initialize progress dashboard
+            await initProgressDashboard();
         });
     </script>
+
+    <!-- 錯誤處理與通知系統 -->
+    <script src="assets/js/error-handler.js"></script>
+    <script src="assets/js/progress-dashboard.js"></script>
+    
     <!-- 帳號確認模組 -->
     <script src="assets/js/account-confirmation.js"></script>
 </body>

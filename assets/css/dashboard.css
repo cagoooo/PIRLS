@@ -1,0 +1,527 @@
+/**
+ * PIRLS 學習進度儀表板樣式 - RWD 優化版 v1.3
+ * @version 1.3
+ * @date 2025-12-29
+ * @fix 修正手機端寬度跑版和環形圖文字重疊問題
+ */
+
+/* 儀表板容器 */
+.progress-dashboard {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin: 20px auto;
+    max-width: 1200px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* 標題區 */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+    font-weight: 700;
+}
+
+.dashboard-toggle {
+    background: rgba(33, 150, 243, 0.1);
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.dashboard-toggle:hover {
+    background: rgba(33, 150, 243, 0.2);
+    transform: scale(1.05);
+}
+
+/* 內容區 */
+.dashboard-content {
+    max-height: 2000px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, opacity 0.3s;
+    opacity: 1;
+}
+
+.dashboard-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+
+/* 柵格佈局 */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    width: 100%;
+}
+
+/* 統計卡片容器 */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+/* 統計卡片 */
+.stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 12px;
+    color: white;
+    transition: transform 0.3s;
+    min-height: 70px;
+    box-sizing: border-box;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card-1 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card-2 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card-3 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.stat-card-4 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.stat-icon {
+    font-size: 32px;
+    flex-shrink: 0;
+}
+
+.stat-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.stat-label {
+    font-size: 13px;
+    opacity: 0.95;
+    margin-top: 2px;
+}
+
+/* 圖表卡片 */
+.chart-card {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.chart-card h4 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: #666;
+    font-weight: 600;
+}
+
+.chart-wide {
+    grid-column: 1 / -1;
+}
+
+/* 進度圖容器 */
+.chart-wrapper {
+    position: relative;
+    height: 200px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+}
+
+.chart-center-text .percentage {
+    font-size: 36px;
+    font-weight: bold;
+    color: #4CAF50;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+.chart-center-text .label {
+    font-size: 14px;
+    color: #999;
+    margin-top: 6px;
+    line-height: 1;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+/* 成績趨勢圖 */
+#scoreChart {
+    height: 250px !important;
+    max-width: 100%;
+}
+
+#progressChart {
+    max-width: 100%;
+}
+
+/* ==================== 響應式設計 ==================== */
+
+/* 大螢幕 (>1024px) */
+@media (min-width: 1025px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* 平板版 (768px - 1024px) */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .chart-wide {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .progress-dashboard {
+        padding: 16px;
+        margin: 12px auto;
+        width: calc(100% - 24px);
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    .dashboard-grid {
+        gap: 14px;
+    }
+
+    .dashboard-header h3 {
+        font-size: 18px;
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+        min-height: 75px;
+    }
+
+    .stat-icon {
+        font-size: 30px;
+    }
+
+    .stat-value {
+        font-size: 26px;
+    }
+
+    .stat-label {
+        font-size: 13px;
+    }
+
+    .chart-card {
+        padding: 16px;
+    }
+
+    /* 增加環形圖容器高度，讓圖表和文字不擠在一起 */
+    .chart-wrapper {
+        height: 240px;
+        /* 增加高度 */
+    }
+
+    /* 縮小百分比文字避免重疊 */
+    .chart-center-text .percentage {
+        font-size: 26px;
+        /* 從 32px 縮小到 26px */
+    }
+
+    .chart-center-text .label {
+        font-size: 11px;
+        /* 從 13px 縮小到 11px */
+        margin-top: 3px;
+    }
+
+    .chart-card h4 {
+        font-size: 15px;
+    }
+
+    #scoreChart {
+        height: 220px !important;
+    }
+}
+
+/* 手機版 (480px - 768px) */
+@media (max-width: 480px) {
+    .progress-dashboard {
+        padding: 14px;
+        margin: 10px auto;
+        width: calc(100% - 20px);
+        border-radius: 10px;
+    }
+
+    .dashboard-grid {
+        gap: 12px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 14px;
+    }
+
+    .dashboard-header h3 {
+        font-size: 17px;
+    }
+
+    .dashboard-toggle {
+        font-size: 22px;
+        padding: 10px;
+    }
+
+    .stats-cards {
+        gap: 10px;
+    }
+
+    .stat-card {
+        padding: 14px;
+        min-height: 70px;
+        gap: 12px;
+    }
+
+    .stat-icon {
+        font-size: 28px;
+    }
+
+    .stat-value {
+        font-size: 24px;
+    }
+
+    .stat-label {
+        font-size: 12px;
+    }
+
+    .chart-card {
+        padding: 14px;
+    }
+
+    .chart-wrapper {
+        height: 220px;
+        /* 增加高度 */
+    }
+
+    /* 進一步縮小文字 */
+    .chart-center-text .percentage {
+        font-size: 24px;
+    }
+
+    .chart-center-text .label {
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .chart-card h4 {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    #scoreChart {
+        height: 200px !important;
+    }
+}
+
+/* 超小螢幕 (<375px，如 iPhone SE) */
+@media (max-width: 375px) {
+    .progress-dashboard {
+        padding: 12px;
+        margin: 8px auto;
+        width: calc(100% - 16px);
+    }
+
+    .dashboard-grid {
+        gap: 10px;
+    }
+
+    .dashboard-header h3 {
+        font-size: 16px;
+    }
+
+    .dashboard-toggle {
+        font-size: 20px;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    .stats-cards {
+        gap: 8px;
+    }
+
+    .stat-card {
+        padding: 12px;
+        min-height: 65px;
+        gap: 10px;
+    }
+
+    .stat-icon {
+        font-size: 26px;
+    }
+
+    .stat-value {
+        font-size: 22px;
+    }
+
+    .stat-label {
+        font-size: 11px;
+    }
+
+    .chart-card {
+        padding: 12px;
+    }
+
+    .chart-wrapper {
+        height: 200px;
+    }
+
+    .chart-center-text .percentage {
+        font-size: 22px;
+        /* 更小的字體 */
+    }
+
+    .chart-center-text .label {
+        font-size: 10px;
+        margin-top: 2px;
+    }
+
+    .chart-card h4 {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    #scoreChart {
+        height: 180px !important;
+    }
+}
+
+/* 確保觸控友善 - 移除 hover 效果在觸控裝置 */
+@media (hover: none) and (pointer: coarse) {
+    .stat-card:hover {
+        transform: none;
+    }
+
+    .dashboard-toggle:hover {
+        background: rgba(33, 150, 243, 0.1);
+        transform: none;
+    }
+
+    /* 但保留 active 狀態給觸控反饋 */
+    .stat-card:active {
+        transform: scale(0.98);
+        opacity: 0.9;
+    }
+
+    .dashboard-toggle:active {
+        background: rgba(33, 150, 243, 0.25);
+        transform: scale(0.95);
+    }
+}
+
+/* ==================== 動畫效果 ==================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-content {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.stat-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* ==================== 深色模式支援 ==================== */
+
+@media (prefers-color-scheme: dark) {
+    .progress-dashboard {
+        background: #2d2d2d;
+    }
+
+    .dashboard-header h3 {
+        color: #e0e0e0;
+    }
+
+    .chart-card {
+        background: #383838;
+    }
+
+    .chart-card h4 {
+        color: #b0b0b0;
+    }
+}
