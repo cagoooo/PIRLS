@@ -653,6 +653,25 @@ const BASE_PATH = getBasePath();
             });
         }
 
+        /**
+         * 自動篩選未完成文章（針對已登入用戶）
+         * 當用戶已登入且有完成記錄時，自動篩選顯示未完成的文章
+         */
+        function autoFilterUncompletedForLoggedInUser() {
+            const storedUser = localStorage.getItem('shimen_pirls_user');
+            
+            // 只對已登入且有完成記錄的用戶應用自動篩選
+            if (storedUser && completedArticleIds.size > 0) {
+                console.log('[Auto Filter] 偵測到已登入用戶，自動篩選未完成文章');
+                applyFilter('uncompleted');
+            } else {
+                // 未登入或無完成記錄，顯示全部
+                console.log('[Auto Filter] 未登入用戶或無完成記錄，顯示全部文章');
+                applyFilter('all');
+            }
+        }
+
+
         // Initialize filter buttons
         function initializeFilterButtons() {
             document.querySelectorAll('.status-btn').forEach(btn => {
@@ -1200,6 +1219,8 @@ const BASE_PATH = getBasePath();
             renderGrid();
             initializeFilterButtons();
             await loadCompletedArticles();
+            // v2.1: Auto-filter uncompleted articles for logged-in users
+            autoFilterUncompletedForLoggedInUser();
         });
     </script>
     <!-- 帳號確認模組 -->
