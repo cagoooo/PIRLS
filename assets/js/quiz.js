@@ -190,8 +190,14 @@ window.saveUserInfo = function () {
     const name = document.getElementById('studentName').value.trim();
     const seat = document.getElementById('seatNumber').value.trim();
 
+    // 檢查必填欄位並提供具體提示
     if (!grade || !classNum || !name) {
-        alert("請完整選擇年級、班級並輸入姓名！");
+        let missingFields = [];
+        if (!grade) missingFields.push('年級');
+        if (!classNum) missingFields.push('班級');
+        if (!name) missingFields.push('姓名');
+
+        alert(`⚠️ 請填寫以下必填欄位：\n\n${missingFields.join('、')}`);
         return;
     }
 
