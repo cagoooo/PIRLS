@@ -1,4 +1,6 @@
 # PIRLS
+> 📌 **目前版本：v2.2.3**（依據 `CHANGELOG.md`）
+
 PIRLS閱讀素養題組
 
 ---
